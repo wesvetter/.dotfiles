@@ -1,0 +1,48 @@
+[user]
+  name = Wes Vetter
+  email = wes.vetter@gmail.com
+[core]
+  excludesfile = /Users/wesleyvetter/.gitignore
+  editor = vim
+[alias]
+  lg = "!git --no-pager log -10 --pretty=format:\"%h - %an: %s (%ar)\""
+  st = status -sb
+  dif = "!git --no-pager diff --color --stat"
+  difw = diff -w
+  standup = "!git log --since yesterday --author `git config user.email` --pretty=short"
+  com = commit --verbose
+  credit = commit --amend --author "$1 <$2>" -C HEAD
+  troll = commit --allow-empty
+  kosher = diff --check
+  ready = rebase -i @{u}
+  purr = pull --rebase
+  unstage = reset HEAD --
+  fuckit = reset --hard
+  nukeit = reset --hard HEAD~
+  yolo = add -A && git commit -am "#YOLO" && git push origin master
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red
+  new = cyan
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+[difftool "sourcetree"]
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path = 
+[mergetool "sourcetree"]
+  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
+[credential]
+  helper = osxkeychain
+[heroku]

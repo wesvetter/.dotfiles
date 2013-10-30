@@ -1,0 +1,52 @@
+# Folder aliases
+alias blog='cd ~/Desktop/blog/wesvetter.github.io'
+alias haiti='cd ~/Desktop/whwn/'
+alias urp='cd ~/Desktop/ug_research_portal'
+alias reu='cd ~/Desktop/reumanager/'
+alias grub='cd ~/Desktop/GrubHaus/'
+alias li='cd ~/Desktop/linkedin-scraper/'
+alias sapp='cd ~/Desktop/rails-tut/sample_app'
+
+# SSH aliases
+alias rpi='ssh 192.168.1.84 -l pi'
+alias lgin='ssh wvetter@ieng6.ucsd.edu'
+alias surp='ssh ubuntu@indra.ucsd.edu'
+
+alias ZZ='exit'
+
+# ignore binary files and search recursively
+#alias grep='grep -Ir'
+alias name='find . -name'
+
+# Program aliases
+alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
+alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+alias git='hub'
+alias wget='curl -O'
+alias gpp='g++'
+alias canhaz='sudo apt-get install'
+alias top='top -o cpu'
+
+# Rename iTerm2 tab
+nametab() {echo -ne "\033]0;"$@"\007"}
+
+# Create/attach tmux session to ssh session
+function ssht(){ ssh $* -t 'tmux a || tmux || /bin/bash' }
+
+# I mean REALLY clear the terminal
+alias clear='clear ; clear ; clear'
+
+# useful `ls` mods
+alias ls='ls -G'                 # not sure if different from --color=tty
+alias l.='ls -d .*'              # lists all dot files
+alias ll='ls -l'                 # detailed file view (not hidden files though)
+alias ldir='ls -d */'            # list only directories
+
+# recursively view folders and their size
+alias files='du --max-depth=1 ./ | sort -n -r'
+
+# display code fixme's, bugs, questions, todo's
+alias todo='grep -r TODO *'
+alias fixme='grep -r FIXME *'
+alias questions='grep -r ??? *'
+alias bugs='grep -r DEBUG *'

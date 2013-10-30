@@ -1,0 +1,295 @@
+" ========
+" Preamble
+" ========
+" Much of this is lifted from Steve Losh's excellent blog post about switching
+" to Vim which I highly recommend you read.
+"   vimrc: https://github.com/sjl/dotfiles/blob/master/vim/vimrc
+"   blog post: http://stevelosh.com/blog/2010/09/coming-home-to-vim/
+"
+" use `:help <thing you are unsure about>` to learn more about these settings
+
+" TODO: setup Yankring or simple 'read/write selection to tmp buffer' commands
+
+" ============
+" Plugin setup
+" ============
+" TODO: setup vundle
+" set up pathogen (plugin manager)
+call pathogen#infect()
+call pathogen#helptags()
+filetype plugin indent on
+
+
+
+" ===================================
+" The basics - these make Vim livable
+" ===================================
+syntax on                       " syntax highlighting on
+set nocompatible                " get rid of strict vi compatibility
+set clipboard=unnamed           " share clipboard on Snow Leopard (doesn't work on Mountain Lion)
+set nu                          " line numbering on
+set showmatch                   " highlight matching pairs of brackets
+set modeline                    " show what I'm doing
+set showmode                    " show the mode on the dedicated line
+set cursorline                  " highlight the current line the cursor is on
+set ruler                       " which line am I on?
+set hlsearch                    " highlight search tokens
+set incsearch                   " incremental searching
+set ignorecase                  " search without regards to case...
+set smartcase                   " ...unless you type case
+set gdefault                    " Applies substitutions globally by default
+set backspace=indent,eol,start  " backspace over everything
+set fileformats=unix,dos,mac    " open files from mac/dos
+set nojoinspaces                " don't add extra whitespace when joining lines
+"set textwidth=78               " automatically wrap at 78 chars
+set nowrap                      " no wrapping!
+set expandtab                   " replace tabs with spaces
+set bs=2                        " fix backspacing in insert mode
+set tabstop=2
+set shiftwidth=2
+set shiftround                  " When at 3 spaces, if I hit >>, go to column 4 not 5.
+set autoindent                  " autoindent on
+set hidden                      " Switch buffers without saving
+set listchars=tab:▸\ ,eol:¬     " use these icons when displaying whitespace
+"set undofile                   " I need to read up on this first
+
+colors elflord                  " Decent color palette for dark backgrounds,
+                                " bitchin' name. Good fallback from Solarized.
+" and the most important change!
+imap jj <Esc>
+
+
+
+" ===========================================
+" Deeper cuts - these make more Vim enjoyable
+" ===========================================
+
+" more reasonable navigation when wrapping is on
+nmap k gk
+nmap j gj
+
+" Let me save/quit dammit!
+command! Q q
+command! W w
+
+" disable Ex mode and Execute Command under cursor
+nmap Q <Nop>    
+nmap K <Nop>
+
+" `help fo-table` to see what this does
+set formatoptions=qrn
+
+" put all the .swp files in one place, ~/.vim-tmp
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/vtr/tmp,/tmp
+
+" better file completion when trying to edit a new file and hitting <TAB>
+set wildmenu
+set wildmode=list:longest,full       
+" Make ctrlp ignore these files
+set wildignore+=*.pyc                     " compiled python files
+set wildignore+=*.jpg,*.jpeg,*.png,*.gif  " binary images
+set wildignore+=*.o                       " compiled object files
+
+" word movements stop on an underscore, eg. within dont_skip_all_of_me
+set iskeyword-=_        
+
+" enable better matching with %, like in html tags
+runtime macros/matchit.vim      
+
+" turn off help button that you only ever hit accidentally
+nnoremap <F1> <Esc>
+inoremap <F1> <Esc>
+vnoremap <F1> <Esc>
+
+" switch between open/close pairs easily
+nnoremap <Tab> %
+vnoremap <Tab> %
+
+" navigate splits with Ctrl-[h,j,k,l]
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" resize splits when the window is resized,
+au VimResized * :wincmd =
+" switch to split after creating it
+set splitbelow
+set splitright
+
+
+
+" ===============
+" Leader commands
+" ===============
+
+" clear highlighting after a search
+nnoremap <leader><space> :noh<cr>
+
+" Switch tabs
+nmap <leader>( :tabprev<cr>
+nmap <leader>) :tabnext<cr>
+
+" text/prose/markdown mode
+nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>
+nmap <leader>tt :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
+
+" Sort CSS properties alphabetically
+nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+
+" re-format a paragraph of text
+nnoremap <leader>q gqip
+
+" clean trailing whitespace
+nnoremap <leader>w mz:%s/\s\+$//<cr>:let @/=''<cr>`z
+
+" Quick set (toggle) commands
+nnoremap <leader>sn :setlocal number!<cr>
+nnoremap <leader>ss :setlocal spell!<cr>
+nnoremap <leader>sw :setlocal wrap!<cr>
+nnoremap <leader>sp :setlocal paste!<cr>
+nnoremap <leader>sl :setlocal list!<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+
+" Quick edit commands
+nnoremap <leader>ev :tabe $MYVIMRC<cr>      " Vim config
+nnoremap <leader>eg :tabe ~/.gitconfig<cr>  " Git config
+nnoremap <leader>ez :tabe ~/.zshrc<cr>      " Zsh
+nnoremap <leader>et :tabe ~/.tmux.conf<cr>  " Tmux
+
+" Window commands
+"  Split windows
+nnoremap <leader>ws :vs<cr>
+nnoremap <leader>wh :sp<cr>
+
+" ReStructuredText headers:
+" section header (with overline)
+nnoremap <leader>rh yypVr=yykP 
+" chapter heading, section heading, subsection, subsubsection
+nnoremap <leader>rp yypVr#yykP 
+nnoremap <leader>ro yypVr=
+nnoremap <leader>ri yypVr-
+nnoremap <leader>ru yypVr^
+nnoremap <leader>ry yypVr"
+
+" wrap line with <%%> or <%=%>
+nnoremap <leader>re I<% <ESC>A %><ESC>
+nnoremap <leader>rw I<%= <ESC>A %><ESC>
+
+
+" ==========================
+" Filetype-specific settings
+" ==========================
+
+" Remember to wrap first line at 50 chars and leave a blank line after though!
+au FileType gitcommit set textwidth=72
+
+" Markdown files
+au BufRead,BufNewFile *.{md,markdown} set filetype=markdown
+au BufRead,BufNewFile *.{md,markdown} set spell
+au BufRead,BufNewFile *.{md,markdown} set nonu
+au BufRead,BufNewFile *.{md,markdown} set wrap
+au BufRead,BufNewFile *.{md,markdown} set lbr
+
+" C/C++
+au BufRead,BufNewFile *.{c,cpp,h,hpp} set expandtab
+au BufRead,BufNewFile *.{c,cpp,hpp,h} set shiftwidth=4
+au BufRead,BufNewFile *.{c,cpp,hpp,h} set tabstop=4
+
+" Assembly, bleh
+au BufRead,BufNewFile *.s set expandtab
+au BufRead,BufNewFile *.s set shiftwidth=4
+au BufRead,BufNewFile *.s set tabstop=4
+
+" HTML
+au BufRead,BufNewFile *.html set expandtab
+au BufRead,BufNewFile *.html set shiftwidth=2
+au BufRead,BufNewFile *.html set tabstop=2
+
+" Sass/CSS
+au BufRead,BufNewFile *.scss set expandtab
+au BufRead,BufNewFile *.scss set shiftwidth=2
+au BufRead,BufNewFile *.scss set tabstop=2
+
+" Python
+au BufRead,BufNewFile *.py set expandtab
+au BufRead,BufNewFile *.py set shiftwidth=4
+au BufRead,BufNewFile *.py set tabstop=4
+
+" for text files word wrap
+au BufRead,BufNewFile *.txt set wrap
+au BufRead,BufNewFile *.txt set lbr
+au BufRead,BufNewFile *.txt set expandtab
+au BufRead,BufNewFile *.txt set shiftwidth=2
+au BufRead,BufNewFile *.txt set tabstop=2
+au BufRead,BufNewFile *.txt set nonu
+
+" reStructuredText files
+au BufRead,BufNewFile *.rst set expandtab
+au BufRead,BufNewFile *.rst set tabstop=4
+au BufRead,BufNewFile *.rst set shiftwidth=4
+au BufRead,BufNewFile *.rst set textwidth=80
+au BufRead,BufNewFile *.rst set nonu
+
+" Remove trailing whitespace on save for ruby files.
+au BufWritePre *.rb :%s/\s\+$//e
+au BufWritePre *.erb :%s/\s\+$//e
+
+
+
+" ===========================================
+" GUI Stuff - I don't have a seperate .gvimrc
+" ===========================================
+if has('gui_running')
+    
+    " Remove all the toolbar icons (like save, print, copy, etc.)
+    set go-=T
+    set go-=l
+    set go-=L
+    set go-=r
+    set go-=R
+
+    highlight SpellBad term=underline gui=undercurl guisp=Orange
+
+    if has("gui_macvim")
+        " display a vertical line at column 85
+        set colorcolumn=80              
+
+        " Full screen means FULL screen
+        set fuoptions=maxvert,maxhorz
+
+        "use Solarized colorscheme, this has to be setup seperately
+        set background=dark
+        colorscheme solarized
+
+        " TODO: look at this more closely
+        " Use the normal HIG movements, except for M-Up/Down
+        let macvim_skip_cmd_opt_movement = 1
+        no   <D-Left>       <Home>
+        no!  <D-Left>       <Home>
+        no   <M-Left>       <C-Left>
+        no!  <M-Left>       <C-Left>
+
+        no   <D-Right>      <End>
+        no!  <D-Right>      <End>
+        no   <M-Right>      <C-Right>
+        no!  <M-Right>      <C-Right>
+
+        no   <D-Up>         <C-Home>
+        ino  <D-Up>         <C-Home>
+        imap <M-Up>         <C-o>{
+
+        no   <D-Down>       <C-End>
+        ino  <D-Down>       <C-End>
+        imap <M-Down>       <C-o>}
+
+        imap <M-BS>         <C-w>
+        inoremap <D-BS>     <esc>my0c`y
+    else
+        " Non-MacVim GUI, like Gvim
+    end
+else 
+    " Console Vim
+    set mouse=i  "enable mouse support in insert mode
+endif
