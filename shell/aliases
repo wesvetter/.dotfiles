@@ -6,6 +6,7 @@ alias reu='cd ~/Desktop/reumanager/'
 alias grub='cd ~/Desktop/GrubHaus/'
 alias li='cd ~/Desktop/linkedin-scraper/'
 alias sapp='cd ~/Desktop/rails-tut/sample_app'
+alias dotfiles='cd ~/.dotfiles'
 
 # SSH aliases
 alias rpi='ssh 192.168.1.84 -l pi'
@@ -19,10 +20,9 @@ alias ZZ='exit'
 alias name='find . -name'
 
 # Program aliases
-alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
-alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+#alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
+#alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
 alias git='hub'
-alias wget='curl -O'
 alias gpp='g++'
 alias canhaz='sudo apt-get install'
 alias top='top -o cpu'

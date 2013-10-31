@@ -49,4 +49,3 @@ export LANG=en_US.UTF-8
 export LC_ALL="en_US.UTF-8"
 
 # Customize to your needs...
-export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/2.7/bin:/opt/local/bin:/opt/local/sbin:/usr/local/heroku/bin:/Users/wesleyvetter/.rvm/gems/ruby-1.9.3-p194/bin:/Users/wesleyvetter/.rvm/gems/ruby-1.9.3-p194@global/bin:/Users/wesleyvetter/.rvm/rubies/ruby-1.9.3-p194/bin:/Users/wesleyvetter/.rvm/bin:/usr/local/Cellar/imagemagick/6.7.7-6/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin:/usr/X11/bin:/Users/wesleyvetter/.rvm/bin
