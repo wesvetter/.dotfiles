@@ -11,8 +11,8 @@ echo "Finished installing homebrew."
 
 # TODO: should probably do some brew doctor check before proceeding
 
-packages="ack hub mysql tmux tree wget"
-#packages="ack hub mongodb mysql postgres tmux tree wget"
+packages="ack hub mysql qt tmux tree wget"
+#mongodb postgres
 
 for package in $packages; do
   brew install $package

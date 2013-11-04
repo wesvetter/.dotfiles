@@ -9,16 +9,24 @@
 " use `:help <thing you are unsure about>` to learn more about these settings
 
 " TODO: setup Yankring or simple 'read/write selection to tmp buffer' commands
+" TODO: Rainbow Parenthesis-type plugin
 
-" ============
-" Plugin setup
-" ============
-" TODO: setup vundle
-" set up pathogen (plugin manager)
-call pathogen#infect()
-call pathogen#helptags()
+
+" ==============
+" Vundle Plugins
+" ==============
+set rtp+=~/.vim/bundle/vundle/
+filetype off
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
+Bundle 'Gundo'
+Bundle 'kien/ctrlp.vim'
+Bundle 'mileszs/ack.vim'
 filetype plugin indent on
-
 
 
 " ===================================
@@ -26,7 +34,7 @@ filetype plugin indent on
 " ===================================
 syntax on                       " syntax highlighting on
 set nocompatible                " get rid of strict vi compatibility
-set clipboard=unnamed           " share clipboard on Snow Leopard (doesn't work on Mountain Lion)
+set clipboard=unnamed           " share clipboard buffer on OS X
 set nu                          " line numbering on
 set showmatch                   " highlight matching pairs of brackets
 set modeline                    " show what I'm doing
@@ -54,7 +62,8 @@ set listchars=tab:▸\ ,eol:¬     " use these icons when displaying whitespace
 "set undofile                   " I need to read up on this first
 
 colors elflord                  " Decent color palette for dark backgrounds,
-                                " bitchin' name. Good fallback from Solarized.
+"colors desert                  " and light backgrounds, respectively.
+
 " and the most important change!
 imap jj <Esc>
 
@@ -103,8 +112,9 @@ inoremap <F1> <Esc>
 vnoremap <F1> <Esc>
 
 " switch between open/close pairs easily
-nnoremap <Tab> %
-vnoremap <Tab> %
+" TODO: find new mapping, breaks CTRL-I functionality
+"nnoremap <Tab> %
+"vnoremap <Tab> %
 
 " navigate splits with Ctrl-[h,j,k,l]
 nnoremap <C-h> <C-w>h
@@ -117,7 +127,6 @@ au VimResized * :wincmd =
 " switch to split after creating it
 set splitbelow
 set splitright
-
 
 
 " ===============
@@ -158,8 +167,7 @@ nnoremap <leader>eg :tabe ~/.gitconfig<cr>  " Git config
 nnoremap <leader>ez :tabe ~/.zshrc<cr>      " Zsh
 nnoremap <leader>et :tabe ~/.tmux.conf<cr>  " Tmux
 
-" Window commands
-"  Split windows
+" Split windows vertically & horizontally
 nnoremap <leader>ws :vs<cr>
 nnoremap <leader>wh :sp<cr>
 
@@ -176,6 +184,9 @@ nnoremap <leader>ry yypVr"
 " wrap line with <%%> or <%=%>
 nnoremap <leader>re I<% <ESC>A %><ESC>
 nnoremap <leader>rw I<%= <ESC>A %><ESC>
+
+" Toggle Gundo
+nnoremap <leader>g :GundoToggle<CR>
 
 
 " ==========================
@@ -196,11 +207,6 @@ au BufRead,BufNewFile *.{md,markdown} set lbr
 au BufRead,BufNewFile *.{c,cpp,h,hpp} set expandtab
 au BufRead,BufNewFile *.{c,cpp,hpp,h} set shiftwidth=4
 au BufRead,BufNewFile *.{c,cpp,hpp,h} set tabstop=4
-
-" Assembly, bleh
-au BufRead,BufNewFile *.s set expandtab
-au BufRead,BufNewFile *.s set shiftwidth=4
-au BufRead,BufNewFile *.s set tabstop=4
 
 " HTML
 au BufRead,BufNewFile *.html set expandtab
@@ -253,7 +259,7 @@ if has('gui_running')
     highlight SpellBad term=underline gui=undercurl guisp=Orange
 
     if has("gui_macvim")
-        " display a vertical line at column 85
+        " display a vertical line at column 80
         set colorcolumn=80              
 
         " Full screen means FULL screen
@@ -261,35 +267,18 @@ if has('gui_running')
 
         "use Solarized colorscheme, this has to be setup seperately
         set background=dark
-        colorscheme solarized
-
-        " TODO: look at this more closely
-        " Use the normal HIG movements, except for M-Up/Down
-        let macvim_skip_cmd_opt_movement = 1
-        no   <D-Left>       <Home>
-        no!  <D-Left>       <Home>
-        no   <M-Left>       <C-Left>
-        no!  <M-Left>       <C-Left>
-
-        no   <D-Right>      <End>
-        no!  <D-Right>      <End>
-        no   <M-Right>      <C-Right>
-        no!  <M-Right>      <C-Right>
-
-        no   <D-Up>         <C-Home>
-        ino  <D-Up>         <C-Home>
-        imap <M-Up>         <C-o>{
-
-        no   <D-Down>       <C-End>
-        ino  <D-Down>       <C-End>
-        imap <M-Down>       <C-o>}
-
-        imap <M-BS>         <C-w>
-        inoremap <D-BS>     <esc>my0c`y
+        silent! colors desert
+        silent! colorscheme solarized
     else
         " Non-MacVim GUI, like Gvim
     end
 else 
     " Console Vim
     set mouse=i  "enable mouse support in insert mode
+endif
+
+
+" put custom code in vimrc.local
+if filereadable(expand("~/.vimrc.local"))
+  source ~/.vimrc.local
 endif

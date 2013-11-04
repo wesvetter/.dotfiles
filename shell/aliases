@@ -20,8 +20,8 @@ alias ZZ='exit'
 alias name='find . -name'
 
 # Program aliases
-#alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
-#alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
+alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
 alias git='hub'
 alias gpp='g++'
 alias canhaz='sudo apt-get install'
