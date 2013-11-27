@@ -1,11 +1,8 @@
 # Folder aliases
 alias blog='cd ~/Desktop/blog/wesvetter.github.io'
-alias haiti='cd ~/Desktop/whwn/'
-alias urp='cd ~/Desktop/ug_research_portal'
-alias reu='cd ~/Desktop/reumanager/'
-alias grub='cd ~/Desktop/GrubHaus/'
-alias li='cd ~/Desktop/linkedin-scraper/'
-alias sapp='cd ~/Desktop/rails-tut/sample_app'
+alias haiti='cd ~/Desktop/Code/whwn/'
+alias urp='cd ~/Desktop/Code/ug_research_portal'
+alias reu='cd ~/Desktop/Code/reumanager/'
 alias dotfiles='cd ~/.dotfiles'
 
 # SSH aliases
@@ -26,6 +23,11 @@ alias git='hub'
 alias gpp='g++'
 alias canhaz='sudo apt-get install'
 alias top='top -o cpu'
+alias untar='tar xvfz'
+alias start_pg='postgres -D /usr/local/var/postgres'
+
+# Ruby/Rails aliases
+alias pryc='pry -r ./config/environment'
 
 # Rename iTerm2 tab
 nametab() {echo -ne "\033]0;"$@"\007"}

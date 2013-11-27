@@ -2,7 +2,7 @@
   name = Wes Vetter
   email = wes.vetter@gmail.com
 [core]
-  excludesfile = /Users/wesleyvetter/.gitignore
+	excludesfile = /Users/wesvetter/.gitignore_global
   editor = vim
 [alias]
   lg = "!git --no-pager log -10 --pretty=format:\"%h - %an: %s (%ar)\""
@@ -45,4 +45,3 @@
   trustExitCode = true
 [credential]
   helper = osxkeychain
-[heroku]

@@ -49,7 +49,7 @@ set gdefault                    " Applies substitutions globally by default
 set backspace=indent,eol,start  " backspace over everything
 set fileformats=unix,dos,mac    " open files from mac/dos
 set nojoinspaces                " don't add extra whitespace when joining lines
-"set textwidth=78               " automatically wrap at 78 chars
+set textwidth=78               " automatically wrap at 78 chars
 set nowrap                      " no wrapping!
 set expandtab                   " replace tabs with spaces
 set bs=2                        " fix backspacing in insert mode
@@ -147,6 +147,9 @@ nmap <leader>tt :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nosp
 " Sort CSS properties alphabetically
 nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
+" Create comment header in CSS
+nnoremap <leader>C VUI/* <ESC>o-<ESC>a-<ESC>48.A */<ESC>
+
 " re-format a paragraph of text
 nnoremap <leader>q gqip
 
@@ -202,6 +205,7 @@ au BufRead,BufNewFile *.{md,markdown} set spell
 au BufRead,BufNewFile *.{md,markdown} set nonu
 au BufRead,BufNewFile *.{md,markdown} set wrap
 au BufRead,BufNewFile *.{md,markdown} set lbr
+au BufRead,BufNewFile *.{md,markdown} set colorcolumn=0
 
 " C/C++
 au BufRead,BufNewFile *.{c,cpp,h,hpp} set expandtab
@@ -230,6 +234,7 @@ au BufRead,BufNewFile *.txt set expandtab
 au BufRead,BufNewFile *.txt set shiftwidth=2
 au BufRead,BufNewFile *.txt set tabstop=2
 au BufRead,BufNewFile *.txt set nonu
+au BufRead,BufNewFile *.txt set colorcolumn=0
 
 " reStructuredText files
 au BufRead,BufNewFile *.rst set expandtab
