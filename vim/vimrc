@@ -49,7 +49,7 @@ set gdefault                    " Applies substitutions globally by default
 set backspace=indent,eol,start  " backspace over everything
 set fileformats=unix,dos,mac    " open files from mac/dos
 set nojoinspaces                " don't add extra whitespace when joining lines
-set textwidth=78               " automatically wrap at 78 chars
+"set textwidth=78               " automatically wrap at 78 chars
 set nowrap                      " no wrapping!
 set expandtab                   " replace tabs with spaces
 set bs=2                        " fix backspacing in insert mode
@@ -139,6 +139,9 @@ nnoremap <leader><space> :noh<cr>
 " Switch tabs
 nmap <leader>( :tabprev<cr>
 nmap <leader>) :tabnext<cr>
+
+" create new tab
+nmap <leader>T :tabe<cr>
 
 " text/prose/markdown mode
 nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>

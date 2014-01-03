@@ -1,6 +1,7 @@
 # Folder aliases
 alias blog='cd ~/Desktop/blog/wesvetter.github.io'
 alias haiti='cd ~/Desktop/Code/whwn/'
+alias dh='cd ~/Desktop/Code/distributedhealth/'
 alias urp='cd ~/Desktop/Code/ug_research_portal'
 alias reu='cd ~/Desktop/Code/reumanager/'
 alias dotfiles='cd ~/.dotfiles'

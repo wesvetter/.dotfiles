@@ -1,0 +1,29 @@
+#!/bin/zsh
+SESSIONNAME='urp'
+CDCOMMAND='urp'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+ then
+    # create the MVC windows, server panes
+    tmux new-session -s $SESSIONNAME -n Models -d
+    tmux new-window -t$SESSIONNAME:2 -n Views
+    tmux new-window -t$SESSIONNAME:3 -n Controllers
+    tmux new-window -t$SESSIONNAME:4 -n Server
+    tmux split-window -t$SESSIONNAME:4 -h -p 50
+    tmux new-window -t$SESSIONNAME:5 -n Shell
+
+    # change to proper directory
+    tmux send-keys -t$SESSIONNAME:1 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:2 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:3 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:5 $CDCOMMAND C-m
+    #tmux select-window -t$SESSIONNAME:4
+    #tmux select-pane -t$SESSIONNAME:4 0
+    #tmux send-keys -t$SESSIONNAME:4 'urp && rake sunspot:solr:run' C-m
+    #tmux select-pane -t$SESSIONNAME:4 1
+    #tmux send-keys -t$SESSIONNAME:4 'urp && rails s' C-m
+fi
+
+tmux attach -t $SESSIONNAME

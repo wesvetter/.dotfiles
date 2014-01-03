@@ -17,6 +17,7 @@
   ready = rebase -i @{u}
   purr = pull --rebase
   unstage = reset HEAD --
+  resume = reset --soft HEAD~1
   fuckit = reset --hard
   nukeit = reset --hard HEAD~
   yolo = add -A && git commit -am "#YOLO" && git push origin master
@@ -45,3 +46,5 @@
   trustExitCode = true
 [credential]
   helper = osxkeychain
+[push]
+	default = current

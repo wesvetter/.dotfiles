@@ -1,0 +1,24 @@
+#!/bin/zsh
+SESSIONNAME='DHLabs'
+CDCOMMAND='cd ~/Desktop/Code/distributedhealth'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+ then
+    # create the MVC windows, server panes
+    tmux new-session -s $SESSIONNAME -n Models -d
+    tmux new-window -t$SESSIONNAME:2 -n Views
+    tmux new-window -t$SESSIONNAME:3 -n Controllers
+    tmux new-window -t$SESSIONNAME:4 -n Server
+    tmux split-window -t$SESSIONNAME:4 -h -p 50
+    tmux new-window -t$SESSIONNAME:5 -n Shell
+
+    # change to proper directory
+    tmux send-keys -t$SESSIONNAME:1 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:2 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:3 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:5 $CDCOMMAND C-m
+fi
+
+tmux attach -t $SESSIONNAME
