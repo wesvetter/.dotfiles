@@ -1,0 +1,41 @@
+#!/bin/zsh
+SESSIONNAME='BuzzManager'
+CDCOMMAND='buzz'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+ then
+    # create the MVC windows, server panes
+    tmux new-session -s $SESSIONNAME -n Models -d
+    tmux new-window -t$SESSIONNAME:2 -n Views
+    tmux new-window -t$SESSIONNAME:3 -n Controllers
+    tmux new-window -t$SESSIONNAME:4 -n Server
+    tmux split-window -t$SESSIONNAME:4 -h -p 50 # split the window into 2 vertical panes,
+    tmux select-pane -L                         # select the left pane,
+    tmux split-window -t$SESSIONNAME:4 -v -p 50 # split the left pane horizontally,
+    tmux select-pane -R                         # select the right pane,
+    tmux split-window -t$SESSIONNAME:4 -v -p 50 # split the right pane horizontally.
+    tmux new-window -t$SESSIONNAME:5 -n Shell
+
+    # change to proper directory
+    tmux send-keys -t$SESSIONNAME:1 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:2 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:3 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:5 $CDCOMMAND C-m
+    tmux select-window -t$SESSIONNAME:4
+    tmux select-pane -t 0
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 'elasticsearch -f -D es.config=/usr/local/opt/elasticsearch/config/elasticsearch.yml'  C-m
+    tmux select-pane -t 1
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 'redis-server' C-m
+    tmux select-pane -t 2
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 'mysql.server start' C-m
+    tmux select-pane -t 3
+    tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:4 'sleep 10 && rails s'  C-m
+fi
+
+tmux attach -t $SESSIONNAME
