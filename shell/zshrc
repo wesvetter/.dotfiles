@@ -45,6 +45,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 source ~/.aliases
 source ~/.zsh-local
+source ~/.zsh-notify
 
 # Enable vi-mode
 bindkey -v
