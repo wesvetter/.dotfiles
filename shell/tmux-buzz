@@ -16,6 +16,7 @@ if [ $? != 0 ]
     tmux select-pane -R                         # select the right pane,
     tmux split-window -t$SESSIONNAME:4 -v -p 50 # split the right pane horizontally.
     tmux new-window -t$SESSIONNAME:5 -n Shell
+    tmux new-window -t$SESSIONNAME:6 -n Specs
 
     # change to proper directory
     tmux send-keys -t$SESSIONNAME:1 $CDCOMMAND C-m
@@ -23,6 +24,7 @@ if [ $? != 0 ]
     tmux send-keys -t$SESSIONNAME:3 $CDCOMMAND C-m
     tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
     tmux send-keys -t$SESSIONNAME:5 $CDCOMMAND C-m
+    tmux send-keys -t$SESSIONNAME:6 $CDCOMMAND C-m
     tmux select-window -t$SESSIONNAME:4
     tmux select-pane -t 0
     tmux send-keys -t$SESSIONNAME:4 $CDCOMMAND C-m
