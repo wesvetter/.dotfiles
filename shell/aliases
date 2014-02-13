@@ -1,4 +1,5 @@
 # Folder aliases
+alias code='cd ~/Desktop/Code/'
 alias blog='cd ~/Desktop/Code/wesvetter.github.io'
 alias haiti='cd ~/Desktop/Code/whwn/'
 alias dh='cd ~/Desktop/Code/distributedhealth/'
@@ -21,6 +22,7 @@ alias name='find . -name'
 # Program aliases
 alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
 alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+alias e='vim'
 alias git='hub'
 alias gpp='g++'
 alias canhaz='sudo apt-get install'
