@@ -30,6 +30,7 @@ alias start_pg='postgres -D /usr/local/var/postgres'
 
 # Ruby/Rails aliases
 alias pryc='pry -r ./config/environment'
+alias ackr='ack --ignore-dir=log'
 
 # Rename iTerm2 tab
 nametab() {echo -ne "\033]0;"$@"\007"}
