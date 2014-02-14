@@ -53,7 +53,7 @@ alias ldir='ls -d */'            # list only directories
 alias files='du --max-depth=1 ./ | sort -n -r'
 
 # display code fixme's, bugs, questions, todo's
-alias todo='grep -r TODO *'
-alias fixme='grep -r FIXME *'
-alias questions='grep -r ??? *'
-alias bugs='grep -r DEBUG *'
+alias todo='ack TODO'
+alias fixme='ack FIXME'
+alias questions='ack ???'
+alias bugs='ack DEBUG'
