@@ -19,15 +19,18 @@ set rtp+=~/.vim/bundle/vundle/
 filetype off
 call vundle#rc()
 Bundle 'gmarik/vundle'
-Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'Gundo'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
+Bundle 'mattn/emmet-vim'
 filetype plugin indent on
 
+" Hit <C-e> then <space> to trigger Emmet
+let g:user_emmet_leader_key = '<c-e>'
+let g:user_emmet_expandabbr_key = g:user_emmet_leader_key . '<space>'
 
 " ===================================
 " The basics - these make Vim livable
