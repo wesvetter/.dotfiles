@@ -1,10 +1,27 @@
-*~
+# System
 .DS_Store
+
+# Vim
+*~
 *.swp
 *.swo
+
+# Compass
 .sass-cache
-log/*.log
+
+# Logs
+*.log
+pip-log.txt
+
+# Tests
 zeus.json
 custom_plan.rb
-.bundle/*
+
+# Python
 *.pyc
+
+# Ruby
+.bundle/*
+
+# npm
+node_modules/
