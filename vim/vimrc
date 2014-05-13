@@ -85,7 +85,7 @@ command! Q q
 command! W w
 
 " disable Ex mode and Execute Command under cursor
-nmap Q <Nop>    
+nmap Q <Nop>
 nmap K <Nop>
 
 " `help fo-table` to see what this does
@@ -97,17 +97,17 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/vtr/tmp,/tmp
 
 " better file completion when trying to edit a new file and hitting <TAB>
 set wildmenu
-set wildmode=list:longest,full       
+set wildmode=list:longest,full
 " Make ctrlp ignore these files
 set wildignore+=*.pyc                     " compiled python files
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif  " binary images
 set wildignore+=*.o                       " compiled object files
 
 " word movements stop on an underscore, eg. within dont_skip_all_of_me
-set iskeyword-=_        
+set iskeyword-=_
 
 " enable better matching with %, like in html tags
-runtime macros/matchit.vim      
+runtime macros/matchit.vim
 
 " turn off help button that you only ever hit accidentally
 nnoremap <F1> <Esc>
@@ -124,6 +124,11 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+
+" For inserting date-time into filename
+cmap <F3> <C-R>=strftime("%Y-%m-%d-%H%M")<CR>
+
 
 " resize splits when the window is resized,
 au VimResized * :wincmd =
@@ -150,7 +155,7 @@ nmap <leader>T :tabe<cr>
 
 " text/prose/markdown mode
 nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>
-nmap <leader>tt :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
+nmap <leader>c :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
 
 " Sort CSS properties alphabetically
 nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
@@ -184,17 +189,20 @@ nnoremap <leader>wh :sp<cr>
 
 " ReStructuredText headers:
 " section header (with overline)
-nnoremap <leader>rh yypVr=yykP 
+nnoremap <leader>rh yypVr=yykP
 " chapter heading, section heading, subsection, subsubsection
-nnoremap <leader>rp yypVr#yykP 
+nnoremap <leader>rp yypVr#yykP
 nnoremap <leader>ro yypVr=
 nnoremap <leader>ri yypVr-
 nnoremap <leader>ru yypVr^
 nnoremap <leader>ry yypVr"
 
-" wrap line with <%%> or <%=%>
+" wrap line with <%...%> or <%=...%>
 nnoremap <leader>re I<% <ESC>A %><ESC>
 nnoremap <leader>rw I<%= <ESC>A %><ESC>
+" wrap line with {{...}} or {%...%}
+nnoremap <leader>tv I{{ <ESC>A }}<ESC>
+nnoremap <leader>tt I{% <ESC>A %}<ESC>
 
 " Toggle Gundo
 nnoremap <leader>g :GundoToggle<CR>
@@ -239,6 +247,17 @@ au BufRead,BufNewFile *.py set expandtab
 au BufRead,BufNewFile *.py set shiftwidth=4
 au BufRead,BufNewFile *.py set tabstop=4
 
+" Django
+au BufNewFile,BufRead admin.py     setlocal filetype=python.django
+au BufNewFile,BufRead urls.py      setlocal filetype=python.django
+au BufNewFile,BufRead models.py    setlocal filetype=python.django
+au BufNewFile,BufRead views.py     setlocal filetype=python.django
+au BufNewFile,BufRead settings.py  setlocal filetype=python.django
+au BufNewFile,BufRead forms.py     setlocal filetype=python.django
+au BufNewFile,BufRead urls.py      setlocal nowrap
+nnoremap <Leader>dh :set ft=htmldjango<CR>
+nnoremap <Leader>dp :set ft=python.django<CR>
+
 " for text files word wrap
 au BufRead,BufNewFile *.txt set wrap
 au BufRead,BufNewFile *.txt set lbr
@@ -265,8 +284,8 @@ au BufWritePre *.erb :%s/\s\+$//e
 " GUI Stuff - I don't have a seperate .gvimrc
 " ===========================================
 if has('gui_running')
-    
-    " Remove all the toolbar icons (like save, print, copy, etc.)
+
+   " Remove all the toolbar icons (like save, print, copy, etc.)
     set go-=T
     set go-=l
     set go-=L
@@ -277,7 +296,7 @@ if has('gui_running')
 
     if has("gui_macvim")
         " display a vertical line at column 80
-        set colorcolumn=80              
+        set colorcolumn=80
 
         " Full screen means FULL screen
         set fuoptions=maxvert,maxhorz
@@ -289,7 +308,7 @@ if has('gui_running')
     else
         " Non-MacVim GUI, like Gvim
     end
-else 
+else
     " Console Vim
     set mouse=i  "enable mouse support in insert mode
 endif

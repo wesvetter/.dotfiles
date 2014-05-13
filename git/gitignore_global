@@ -6,3 +6,5 @@
 log/*.log
 zeus.json
 custom_plan.rb
+.bundle/*
+*.pyc
