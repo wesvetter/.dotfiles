@@ -9,7 +9,7 @@ alias buzz='cd ~/Desktop/Code/buzzmgr/'
 alias dotfiles='cd ~/.dotfiles'
 
 # SSH aliases
-alias rpi='ssh 192.168.1.84 -l pi'
+alias rpi='ssh 192.168.1.72 -l pi'
 alias lgin='ssh wvetter@ieng6.ucsd.edu'
 alias surp='ssh ubuntu@indra.ucsd.edu'
 

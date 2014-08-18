@@ -129,6 +129,8 @@ nnoremap <C-l> <C-w>l
 " For inserting date-time into filename
 cmap <F3> <C-R>=strftime("%Y-%m-%d-%H%M")<CR>
 
+" delete into 'black hole register' so as not to overwrite copy buffer
+nmap D "_d
 
 " resize splits when the window is resized,
 au VimResized * :wincmd =
@@ -136,6 +138,12 @@ au VimResized * :wincmd =
 set splitbelow
 set splitright
 
+
+" Toggle pastemode with F2, paste with F3
+" TODO: extract a function
+set pastetoggle=<F2>
+nmap <F3> <F2>"*p<F2>
+imap <F3> <ESC><F2>"*p<F2>i
 
 " ===============
 " Leader commands
@@ -157,11 +165,15 @@ nmap <leader>T :tabe<cr>
 nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>
 nmap <leader>c :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
 
-" Sort CSS properties alphabetically
-nnoremap <leader>S ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
-" Create comment header in CSS
-nnoremap <leader>C VUI/* <ESC>o-<ESC>a-<ESC>48.A */<ESC>
+" CSS commands:
+"--------------
+" Sort CSS properties alphabetically
+nnoremap <leader>AZ ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
+" CSS Section comment block
+nnoremap <leader>C VUO/* <ESC>a=<ESC>48.<CR><ESC>o=<ESC>a=<ESC>47.a */<ESC>
+" CSS Sub-section comment block
+nnoremap <leader>S VUI/* <ESC>o-<ESC>a-<ESC>48.A */<ESC>
 
 " re-format a paragraph of text
 nnoremap <leader>q gqip
@@ -236,6 +248,11 @@ au BufRead,BufNewFile *.{c,cpp,hpp,h} set tabstop=4
 au BufRead,BufNewFile *.html set expandtab
 au BufRead,BufNewFile *.html set shiftwidth=2
 au BufRead,BufNewFile *.html set tabstop=2
+
+" Javascript
+au BufRead,BufNewFile *.js set expandtab
+au BufRead,BufNewFile *.js set shiftwidth=4
+au BufRead,BufNewFile *.js set tabstop=4
 
 " Sass/CSS
 au BufRead,BufNewFile *.scss set expandtab
