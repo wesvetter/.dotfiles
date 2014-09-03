@@ -66,6 +66,8 @@ set listchars=tab:▸\ ,eol:¬     " use these icons when displaying whitespace
 
 colors elflord                  " Decent color palette for dark backgrounds,
 "colors desert                  " and light backgrounds, respectively.
+hi ColorColumn ctermbg=lightgrey guibg=lightgrey
+
 
 " and the most important change!
 imap jj <Esc>
@@ -164,6 +166,9 @@ nmap <leader>T :tabe<cr>
 " text/prose/markdown mode
 nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>
 nmap <leader>c :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
+
+" turn on color column
+nmap <leader>cc :set cc=80<CR>
 
 
 " CSS commands:
