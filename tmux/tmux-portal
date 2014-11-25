@@ -1,0 +1,37 @@
+#!/bin/zsh
+SESSIONNAME='portal'
+CD_PROJECT_ROOT='cd ~/Desktop/Code/clinic_portal'
+CD_APP_ROOT='cd ~/Desktop/Code/clinic_portal/portal/'
+WORKON='workon portal'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+  then
+    # create the server panes, MVC windows
+    tmux new-session -s $SESSIONNAME -n Shell -d
+    tmux split-window -t$SESSIONNAME:1 -h -p 50 # split the window into 2 vertical panes,
+    tmux new-window -t$SESSIONNAME:2 -n Models
+    tmux new-window -t$SESSIONNAME:3 -n Controllers
+    tmux new-window -t$SESSIONNAME:4 -n Templates
+    tmux new-window -t$SESSIONNAME:5 -n CSS/JS
+
+    # change to proper directory
+    tmux select-window -t$SESSIONNAME:1
+    tmux select-pane -L
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux select-pane -R
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'postgres -D /usr/local/var/postgres' C-m
+    tmux split-window -t$SESSIONNAME:1 -v -p 50 # split the right pane horizontally.
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'grunt serve' C-m
+    tmux send-keys -t$SESSIONNAME:2 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:3 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:4 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:5 $CD_APP_ROOT C-m
+fi
+
+tmux attach -t $SESSIONNAME

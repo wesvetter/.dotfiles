@@ -213,5 +213,6 @@ function notify-if-background() {
 #autoload -U tell-terminal
 #autoload -U tell-iterm2
 #autoload -U notify-if-background
+autoload -U add-zsh-hook
 add-zsh-hook preexec store-command-stats
 add-zsh-hook precmd notify-command-complete

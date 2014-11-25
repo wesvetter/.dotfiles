@@ -26,6 +26,9 @@ Bundle 'Gundo'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
 Bundle 'mattn/emmet-vim'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'mattn/webapi-vim'
+Bundle 'mattn/gist-vim'
 filetype plugin indent on
 
 " Hit <C-e> then <space> to trigger Emmet
@@ -146,6 +149,9 @@ set splitright
 set pastetoggle=<F2>
 nmap <F3> <F2>"*p<F2>
 imap <F3> <ESC><F2>"*p<F2>i
+
+" Display full file-path and buffer with Ctrl-G
+nnoremap <C-g> 2<C-g>
 
 " ===============
 " Leader commands

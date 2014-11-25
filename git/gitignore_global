@@ -25,3 +25,6 @@ custom_plan.rb
 
 # npm
 node_modules/
+
+# Redis
+*.rdb

@@ -1,0 +1,47 @@
+#!/bin/zsh
+SESSIONNAME='keep'
+CD_PROJECT_ROOT='cd ~/Desktop/Code/keep'
+CD_APP_ROOT='cd ~/Desktop/Code/keep/keep_backend'
+WORKON='workon keep'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+  then
+    # create the server panes, MVC windows
+    tmux new-session -s $SESSIONNAME -n Shell -d
+    tmux split-window -t$SESSIONNAME:1 -h -p 50 # split the window into 2 vertical panes,
+    tmux select-pane -L                         # select the left pane,
+    tmux split-window -t$SESSIONNAME:1 -v -p 50 # split the left pane horizontally,
+    tmux select-pane -R                         # select the right pane,
+    tmux split-window -t$SESSIONNAME:1 -v -p 50 # split the right pane horizontally.
+    tmux new-window -t$SESSIONNAME:2 -n Models
+    tmux new-window -t$SESSIONNAME:3 -n Controllers
+    tmux new-window -t$SESSIONNAME:4 -n Templates
+    tmux new-window -t$SESSIONNAME:5 -n CSS/JS
+
+    # run commands
+    tmux select-window -t$SESSIONNAME:1
+    tmux select-pane -t 0
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'sleep 3 && python manage.py runserver' C-m
+    tmux select-pane -t 1
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'redis-server' C-m
+    tmux select-pane -t 2
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'sleep 3 && python manage.py celeryd worker -E' C-m
+    tmux select-pane -t 3
+    tmux send-keys -t$SESSIONNAME:1 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'mongod' C-m
+
+    tmux send-keys -t$SESSIONNAME:2 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:3 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:4 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:5 $CD_APP_ROOT C-m
+fi
+
+tmux attach -t $SESSIONNAME

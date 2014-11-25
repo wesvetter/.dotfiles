@@ -29,6 +29,8 @@ alias canhaz='sudo apt-get install'
 alias top='top -o cpu'
 alias untar='tar xvfz'
 alias start_pg='postgres -D /usr/local/var/postgres'
+alias duh="du -hs"
+alias duhs="du -hs"
 
 # Ruby/Rails aliases
 alias pryc='pry -r ./config/environment'

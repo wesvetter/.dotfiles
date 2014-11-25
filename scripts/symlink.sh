@@ -8,7 +8,7 @@
 echo -n "Creating new symlinks..."
 
 # copy topic folders
-topics="vim shell ruby git"
+topics="vim shell ruby git tmux"
 for topic in $topics; do
   cd $HOME/.dotfiles/$topic
   for file in `ls`; do
