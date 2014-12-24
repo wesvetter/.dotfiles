@@ -32,6 +32,9 @@ alias start_pg='postgres -D /usr/local/var/postgres'
 alias duh="du -hs"
 alias duhs="du -hs"
 
+# list top-level NPM packages
+alias npmls='npm ls --depth=0 "$@" 2>/dev/null'
+
 # Ruby/Rails aliases
 alias pryc='pry -r ./config/environment'
 alias ackr='ack --ignore-dir=log'
