@@ -103,10 +103,12 @@ set directory=~/.vim-tmp,~/.tmp,~/tmp,/vtr/tmp,/tmp
 " better file completion when trying to edit a new file and hitting <TAB>
 set wildmenu
 set wildmode=list:longest,full
+
 " Make ctrlp ignore these files
 set wildignore+=*.pyc                     " compiled python files
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif  " binary images
 set wildignore+=*.o                       " compiled object files
+let g:ctrlp_custom_ignore = 'node_modules'
 
 " word movements stop on an underscore, eg. within dont_skip_all_of_me
 set iskeyword-=_
