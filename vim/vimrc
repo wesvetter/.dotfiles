@@ -291,6 +291,10 @@ nnoremap <Leader>dp :set ft=python.django<CR>
 " Embedded JS
 au BufNewFile,BufRead *.ejs  setlocal filetype=html
 
+" Literate CoffeeScript
+autocmd FileType litcoffee runtime ftplugin/coffee.vim
+
+
 " for text files word wrap
 au BufRead,BufNewFile *.txt set wrap
 au BufRead,BufNewFile *.txt set lbr

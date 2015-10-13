@@ -47,6 +47,6 @@
 [credential]
   helper = osxkeychain
 [push]
-	default = current
+  default = current
 [github]
-	user = wesvetter
+  user = wesvetter

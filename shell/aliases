@@ -31,6 +31,7 @@ alias untar='tar xvfz'
 alias start_pg='postgres -D /usr/local/var/postgres'
 alias duh="du -hs"
 alias duhs="du -hs"
+alias gitk="gitk --all"
 
 # list top-level NPM packages
 alias npmls='npm ls --depth=0 "$@" 2>/dev/null'
