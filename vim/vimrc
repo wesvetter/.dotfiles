@@ -22,6 +22,7 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-fugitive'
 Bundle 'Gundo'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
@@ -29,11 +30,16 @@ Bundle 'mattn/emmet-vim'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'mattn/webapi-vim'
 Bundle 'mattn/gist-vim'
+Bundle 'vim-stylus'
 filetype plugin indent on
 
 " Hit <C-e> then <space> to trigger Emmet
 let g:user_emmet_leader_key = '<c-e>'
 let g:user_emmet_expandabbr_key = g:user_emmet_leader_key . '<space>'
+
+" Don't start Instant Markdown Preview by default
+" (launch it with :InstantMarkdownPreview)
+let g:instant_markdown_autostart = 0
 
 " ===================================
 " The basics - these make Vim livable
