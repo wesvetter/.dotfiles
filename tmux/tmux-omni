@@ -1,0 +1,30 @@
+#!/bin/zsh
+SESSIONNAME='omni'
+CD_PROJECT_ROOT='cd ~/Desktop/Code/omni'
+CD_APP_ROOT='cd ~/Desktop/Code/omni/app/'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+  then
+    # Create the windows
+    tmux new-session -s $SESSIONNAME -n Shell -d
+    tmux split-window -t$SESSIONNAME:1 -h -p 50 # split the window into 2 vertical panes,
+    tmux new-window -t$SESSIONNAME:2 -n Coffee
+    tmux new-window -t$SESSIONNAME:3 -n Sass
+    tmux new-window -t$SESSIONNAME:4 -n HTML
+
+    # Setup shell window
+    tmux select-window -t$SESSIONNAME:1
+    tmux select-pane -R # select the right pane
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 'grunt serve' C-m
+    tmux select-pane -L # select the left pane
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+
+    # Setup other windows
+    tmux send-keys -t$SESSIONNAME:2 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:3 $CD_APP_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:4 $CD_APP_ROOT C-m
+fi
+
+tmux attach -t $SESSIONNAME

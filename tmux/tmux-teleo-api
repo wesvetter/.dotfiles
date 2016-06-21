@@ -1,0 +1,24 @@
+#!/bin/zsh
+SESSIONNAME='teleoapi'
+CD_PROJECT_ROOT='cd ~/Desktop/Code/Teleo-API'
+WORKON='workon teleoapi'
+tmux has-session -t $SESSIONNAME &> /dev/null
+
+if [ $? != 0 ]
+  then
+    # Create the windows
+    tmux new-session -s $SESSIONNAME -n Shell -d
+    tmux split-window -t$SESSIONNAME:1 -h -p 50 # split the window into 2 vertical panes,
+
+    # Setup shell window
+    tmux select-window -t$SESSIONNAME:1
+    tmux select-pane -R # select the right pane
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux send-keys -t$SESSIONNAME:1 'sleep 3 && python manage.py runserver' C-m
+    tmux select-pane -L # select the left pane
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 'postgres -D /usr/local/var/postgres' C-m
+fi
+
+tmux attach -t $SESSIONNAME
