@@ -211,7 +211,7 @@ nnoremap <leader>AZ ?{<CR>jV/^\s*\}?$<CR>k:sort<CR>:noh<CR>
 " CSS Section comment block
 nnoremap <leader>C VUO/* <ESC>a=<ESC>48.<CR><ESC>o=<ESC>a=<ESC>47.a */<ESC>
 " CSS Sub-section comment block
-nnoremap <leader>S VUI/* <ESC>o-<ESC>a-<ESC>48.A */<ESC>
+nnoremap <leader>S VUI/* <ESC>o–<ESC>a–<ESC>48.A */<ESC>
 
 " re-format a paragraph of text
 nnoremap <leader>q gqip
