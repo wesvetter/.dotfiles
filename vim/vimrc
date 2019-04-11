@@ -260,6 +260,10 @@ nnoremap <leader>rw I<%= <ESC>A %><ESC>
 nnoremap <leader>tv I{{ <ESC>A }}<ESC>
 nnoremap <leader>tt I{% <ESC>A %}<ESC>
 
+
+" Insert template Markdown comment
+nnoremap <leader>mc I[//]: # (CHANGEME)<ESC>
+
 " Toggle Gundo
 nnoremap <leader>g :GundoToggle<CR>
 
