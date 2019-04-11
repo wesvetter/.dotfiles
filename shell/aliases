@@ -18,6 +18,7 @@ alias ZZ='exit'
 # ignore binary files and search recursively
 #alias grep='grep -Ir'
 alias name='find . -name'
+alias hgrep='history | grep'
 
 # Program aliases
 alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
