@@ -30,8 +30,8 @@ alias canhaz='sudo apt-get install'
 alias top='top -o cpu'
 alias untar='tar xvfz'
 alias start_pg='postgres -D /usr/local/var/postgres'
-alias duh="du -hs"
-alias duhs="du -hs"
+alias duh="du -h -d 1"
+alias files='du -h -d 1 | sort -h -r'
 alias gitk="gitk --all"
 
 # list top-level NPM packages
@@ -55,9 +55,6 @@ alias ls='ls -G'                 # not sure if different from --color=tty
 alias l.='ls -d .*'              # lists all dot files
 alias ll='ls -l'                 # detailed file view (not hidden files though)
 alias ldir='ls -d */'            # list only directories
-
-# recursively view folders and their size
-alias files='du --max-depth=1 ./ | sort -n -r'
 
 # display code fixme's, bugs, questions, todo's
 alias todo='ack TODO'
