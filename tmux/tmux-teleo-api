@@ -2,23 +2,42 @@
 SESSIONNAME='teleoapi'
 CD_PROJECT_ROOT='cd ~/Desktop/Code/Teleo-API'
 WORKON='workon teleoapi'
+nametab $SESSIONNAME
 tmux has-session -t $SESSIONNAME &> /dev/null
 
 if [ $? != 0 ]
   then
-    # Create the windows
+    # Split the window into 4 panes
     tmux new-session -s $SESSIONNAME -n Shell -d
     tmux split-window -t$SESSIONNAME:1 -h -p 50 # split the window into 2 vertical panes,
+    tmux select-pane -L                         # select the left pane,
+    tmux split-window -t$SESSIONNAME:1 -v -p 50 # split the left pane horizontally,
+    tmux select-pane -R                         # select the right pane,
+    tmux split-window -t$SESSIONNAME:1 -v -p 50 # split the right pane horizontally.
+    tmux new-window -t$SESSIONNAME:2 -n Python
 
-    # Setup shell window
+    # Setup shell window:
+    # Top-left:     Django server
+    # Top-right:    Postgres
+    # Bottom-left:  Shell at project root
+    # Bottom-right: Shell at project root
     tmux select-window -t$SESSIONNAME:1
-    tmux select-pane -R # select the right pane
+    tmux select-pane -t 0
     tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
     tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
-    tmux send-keys -t$SESSIONNAME:1 'sleep 3 && python manage.py runserver' C-m
-    tmux select-pane -L # select the left pane
+    tmux send-keys -t$SESSIONNAME:1 'sleep 3 && python manage.py runserver_plus' C-m
+    tmux select-pane -t 2
     tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
     tmux send-keys -t$SESSIONNAME:1 'postgres -D /usr/local/var/postgres' C-m
+    tmux select-pane -t 1
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+    tmux select-pane -t 3
+    tmux send-keys -t$SESSIONNAME:1 $CD_PROJECT_ROOT C-m
+    tmux send-keys -t$SESSIONNAME:1 $WORKON C-m
+
+    # Switch to the project directory in the Python window.
+    tmux send-keys -t$SESSIONNAME:2 $CD_APP_ROOT C-m
 fi
 
 tmux attach -t $SESSIONNAME

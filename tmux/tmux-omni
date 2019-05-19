@@ -2,6 +2,7 @@
 SESSIONNAME='omni'
 CD_PROJECT_ROOT='cd ~/Desktop/Code/omni'
 CD_APP_ROOT='cd ~/Desktop/Code/omni/app/'
+nametab $SESSIONNAME
 tmux has-session -t $SESSIONNAME &> /dev/null
 
 if [ $? != 0 ]
