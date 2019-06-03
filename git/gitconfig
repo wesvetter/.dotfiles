@@ -5,6 +5,7 @@
 	excludesfile = /Users/wesvetter/.gitignore_global
   editor = vim
 [alias]
+  co = checkout
   lg = "!git --no-pager log -10 --pretty=format:\"%h - %an: %s (%ar)\""
   st = status -sb
   dif = "!git --no-pager diff --color --stat"
