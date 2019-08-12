@@ -1,0 +1,6 @@
+prefix=~/.npm-packages
+init-author-name=Wes Vetter
+init-author-email=wesvetter@gmail.com
+init-author-url=https://wesvetter.com
+init-license=MIT
+save-exact=true
