@@ -64,4 +64,7 @@ export LC_ALL="en_US.UTF-8"
 
 # Customize to your needs...
 
+# Skip history entries with a leading space.
+HISTCONTROL=ignorespace
+
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
