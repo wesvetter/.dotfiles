@@ -4,7 +4,6 @@
 # whatever files or links were there previously, without backing them up.
 # #YOLO.
 
-
 echo -n "Creating new symlinks..."
 
 # copy topic folders
