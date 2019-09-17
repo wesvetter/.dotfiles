@@ -18,19 +18,23 @@
 set rtp+=~/.vim/bundle/Vundle.vim
 filetype off
 call vundle#rc()
-Bundle 'gmarik/vundle'
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-fugitive'
-Bundle 'Gundo'
-Bundle 'kien/ctrlp.vim'
-Bundle 'mileszs/ack.vim'
-Bundle 'mattn/emmet-vim'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'mattn/webapi-vim'
-Bundle 'mattn/gist-vim'
-Bundle 'vim-stylus'
+Plugin 'gmarik/vundle'
+Plugin 'tpope/vim-rails'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-fugitive'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'Gundo'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'mileszs/ack.vim'
+Plugin 'mattn/emmet-vim'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'mattn/webapi-vim'
+Plugin 'mattn/gist-vim'
+Plugin 'vim-stylus'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
 filetype plugin indent on
 
 " Hit <C-e> then <space> to trigger Emmet
