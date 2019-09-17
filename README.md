@@ -16,7 +16,7 @@ From a fresh MBP machine:
 *   Install MacVim
     - Install Vundle
 *   Install iTerm2
-*   Install Zsh, Oh-My-Zsh
+*   Install Zsh, Oh-My-Zsh, [zsh-notify]
 *   Clone dotfiles repo (this repo)
     -   Run brew install script (install homebrew first)
     -   Run symlink script
@@ -27,6 +27,8 @@ From a fresh MBP machine:
     -   Hide channels by default
     -   Turn off email notifications
 *   Install Dash
+
+[zsh-notify]: https://github.com/marzocchi/zsh-notify
 
 Mac Settings:
 
