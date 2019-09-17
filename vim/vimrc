@@ -120,8 +120,9 @@ set wildmode=list:longest,full
 " Make ctrlp ignore these files
 set wildignore+=*.pyc                     " compiled python files
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif  " binary images
+set wildignore+=*.ttf,*.otf,*.woff,*.svg  " fonts
 set wildignore+=*.o                       " compiled object files
-let g:ctrlp_custom_ignore = 'node_modules'
+let g:ctrlp_custom_ignore = '\v(node_modules|bower_components|tmp)'
 
 " word movements stop on an underscore, eg. within dont_skip_all_of_me
 set iskeyword-=_
