@@ -45,6 +45,9 @@ let g:user_emmet_expandabbr_key = g:user_emmet_leader_key . '<space>'
 " (launch it with :InstantMarkdownPreview)
 let g:instant_markdown_autostart = 0
 
+" Enable Mustache snippets
+let g:mustache_abbreviations = 1
+
 " ===================================
 " The basics - these make Vim livable
 " ===================================
