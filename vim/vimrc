@@ -305,10 +305,13 @@ au BufRead,BufNewFile *.html set expandtab
 au BufRead,BufNewFile *.html set shiftwidth=2
 au BufRead,BufNewFile *.html set tabstop=2
 
-" Javascript
+" Javascript/TypeScript
 au BufRead,BufNewFile *.js set expandtab
-au BufRead,BufNewFile *.js set shiftwidth=4
-au BufRead,BufNewFile *.js set tabstop=4
+au BufRead,BufNewFile *.js set shiftwidth=2
+au BufRead,BufNewFile *.js set tabstop=2
+au BufRead,BufNewFile *.ts set expandtab
+au BufRead,BufNewFile *.ts set shiftwidth=2
+au BufRead,BufNewFile *.ts set tabstop=2
 
 " Sass/CSS
 au BufRead,BufNewFile *.scss set expandtab
