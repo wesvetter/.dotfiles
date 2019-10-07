@@ -13,7 +13,7 @@
 
 # It might be nice to install postgres, mysql, and openssl but leaving
 # those off as they aren't always needed.
-packages="ack hub tmux tree wget"
+packages="ack hub tmux tree wget fzf"
 
 for package in $packages; do
   brew install $package
