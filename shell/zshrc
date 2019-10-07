@@ -103,5 +103,8 @@ export LANG=en_US.UTF-8
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
+# Enable autocomplete for git commands
+autoload -Uz compinit && compinit
+
 source ~/nurx/api/.bashrc
 source ~/nurx/webapp/.bashrc
