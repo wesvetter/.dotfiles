@@ -78,6 +78,7 @@ source ~/.zsh-local
 
 # Enable vi-mode
 bindkey -v
+bindkey "^R" history-incremental-search-backward
 # Enable vi-mode status indicator
 function zle-line-init zle-keymap-select {
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
