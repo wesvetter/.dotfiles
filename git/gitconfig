@@ -54,5 +54,6 @@
   helper = osxkeychain
 [push]
   default = current
+  autoSetupRemote = true
 [github]
   user = wesvetter
