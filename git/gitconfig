@@ -2,7 +2,7 @@
   name = Wes Vetter
   email = wes.vetter@gmail.com
 [core]
-	excludesfile = /Users/wesvetter/.gitignore_global
+  excludesfile = $HOME/.gitignore_global
   editor = vim
 [alias]
   addi = add -i -p
