@@ -1,1 +1,6 @@
 --type-add=markdown=.md,.markdown
+--type-add=handlebars=.hbs
+--type-add=hbs=.hbs
+
+# Ignore node_modules
+--ignore-dir=node_modules/
