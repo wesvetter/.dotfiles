@@ -411,6 +411,26 @@ if filereadable(expand("~/.vimrc.local"))
 endif
 
 
+
+" Emoji shortcuts (common git commit emojis)
+ab :add_test: ✅
+ab :bug: 🐛
+ab :config: 📇
+ab :docs: 📚
+ab :feature: ✨
+ab :fix_test: 💚
+ab :perf: 🐎
+ab :refactor: ♻️
+ab :security: 🔒
+ab :tooling: 🔧
+ab :trash: 🗑️
+ab :wip: 🚧
+ab :hotfix: 🔥
+ab :lint: 👕
+ab :art: 🎨
+ab :poop: 💩 
+ab :log: 🔊
+
 " =========
 " Functions
 " =========
