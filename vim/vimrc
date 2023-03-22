@@ -122,7 +122,7 @@ set wildignore+=*.pyc                     " compiled python files
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif  " binary images
 set wildignore+=*.ttf,*.otf,*.woff,*.svg  " fonts
 set wildignore+=*.o                       " compiled object files
-let g:ctrlp_custom_ignore = '\v(node_modules|bower_components|tmp)'
+let g:ctrlp_custom_ignore = '\v(node_modules|bower_components|tmp|build|coverage)'
 
 " word movements stop on an underscore, eg. within dont_skip_all_of_me
 set iskeyword-=_
@@ -152,6 +152,9 @@ nnoremap <C-down> :resize +5<cr>
 nnoremap <C-up> :resize -5<cr>
 nnoremap <C-right> :vertical resize +5<cr>
 
+" Search using 'very-magic' regex mode.
+nnoremap / /\v
+vnoremap / /\v
 
 " For inserting date-time into filename
 cmap <F3> <C-R>=strftime("%Y-%m-%d-%H%M")<CR>
@@ -211,11 +214,16 @@ nmap <leader>) :tabnext<cr>
 nmap <leader>T :tabe<cr>
 
 " text/prose/markdown mode
+nmap <leader>p :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>:set ft=markdown<CR>
 nmap <leader>t :setlocal wrap<CR>:setlocal lbr<CR>:setlocal nonu<CR>:set spell<CR>:set colorcolumn=0<CR>
 nmap <leader>c :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospell<CR>
 
 " turn on color column
 nmap <leader>cc :set cc=80<CR>
+
+" Compress/format JSON in paste buffer
+nmap <leader>jc :!pbpaste \| jq -c \| pbcopy<CR>
+nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
 
 
 " CSS commands:
