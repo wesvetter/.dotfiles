@@ -34,7 +34,8 @@ From a fresh MBP machine:
 *   Install Dash
 *   [Make gitk not super ugly](https://superuser.com/questions/620824/is-it-possible-to-have-git-gui-gitk-look-good-on-a-retina-macbook-pro)
 
-[zsh-notify]: https://github.com/marzocchi/zsh-notify
+[zsh-notify]: https://github.com/marzocchi/zsh-notify#oh-my-zsh
+
 
 Mac Settings:
 
