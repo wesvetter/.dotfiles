@@ -10,17 +10,22 @@ often end with `rc`).
 From a fresh MBP machine:
 
 *   Install Firefox (and AdBlock)
-    _   Install 1Password extension
-    _   Set DuckDuckGo as the default search engine
-    _   Sync bookmarks
+    -   Install 1Password extension
+    -   Set DuckDuckGo as the default search engine
+    -   Sync bookmarks
 *   Install MacVim
-    - Install Vundle
 *   Install iTerm2
 *   Install Zsh, Oh-My-Zsh, [zsh-notify]
 *   Clone dotfiles repo (this repo)
-    -   Run brew install script (install homebrew first)
+    -   Run brew install script
     -   Run symlink script
-*   Install Node
+        ```
+        $ cd scripts
+        $ ./brew_installs.sh
+        $ ./symlink.sh
+        ```
+
+*   Install nvm, node
 *   Install Apple Developer Tools, Xcode
 *   Install Dropbox
 *   Install/Configure Slack
