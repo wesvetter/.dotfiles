@@ -1,5 +1,7 @@
 init-author-name=Wes Vetter
-init-author-email=wesvetter@gmail.com
+init-author-email=wes.vetter@gmail.com
 init-author-url=https://wesvetter.com/
 init-license=MIT
 save-exact=true
+@thirtymadison:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_ACCESS_TOKEN}
