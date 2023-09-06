@@ -396,6 +396,10 @@ if has('gui_running')
         set background=dark
         silent! colors desert
         silent! colorscheme solarized
+
+        " Use Fira Code (with ligatures enabled).
+        set macligatures
+        set guifont=Fira\ Code:h12
     else
         " Non-MacVim GUI, like Gvim
     end

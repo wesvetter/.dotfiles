@@ -19,7 +19,7 @@ From a fresh MBP machine:
         $ ./brew_installs.sh
         $ ./symlink.sh
         ```
-
+*   Install [Fira Code font][gh-fira-code]
 *   Install nvm, node
 *   Install Apple Developer Tools, Xcode
 *   Install Dropbox
@@ -30,6 +30,7 @@ From a fresh MBP machine:
 *   [Make gitk not super ugly](https://superuser.com/questions/620824/is-it-possible-to-have-git-gui-gitk-look-good-on-a-retina-macbook-pro)
 
 [gh-zsh-notify]: https://github.com/marzocchi/zsh-notify#oh-my-zsh
+[gh-fira-code]: https://github.com/tonsky/FiraCode
 
 
 ## macOS Settings:
