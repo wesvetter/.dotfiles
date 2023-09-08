@@ -14,10 +14,12 @@ From a fresh MBP machine:
 *   Clone dotfiles repo (this repo)
     -   Run brew install script
     -   Run symlink script
+    -   Install Vim plugins
         ```
         $ cd scripts
         $ ./brew_installs.sh
         $ ./symlink.sh
+        $ ./install_vim_plugins.sh
         ```
 *   Install [Fira Code font][gh-fira-code]
 *   Install nvm, node
@@ -27,7 +29,6 @@ From a fresh MBP machine:
     -   Hide channels by default
     -   Turn off email notifications
 *   Install Dash
-*   [Make gitk not super ugly](https://superuser.com/questions/620824/is-it-possible-to-have-git-gui-gitk-look-good-on-a-retina-macbook-pro)
 
 [gh-zsh-notify]: https://github.com/marzocchi/zsh-notify#oh-my-zsh
 [gh-fira-code]: https://github.com/tonsky/FiraCode

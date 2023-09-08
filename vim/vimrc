@@ -8,34 +8,12 @@
 "
 " use `:help <thing you are unsure about>` to learn more about these settings
 
-" TODO: setup Yankring or simple 'read/write selection to tmp buffer' commands
-" TODO: Rainbow Parenthesis-type plugin
-
 
 " ==============
-" Vundle Plugins
+" Plugins
 " ==============
-set rtp+=~/.vim/bundle/Vundle.vim
-filetype off
-call vundle#rc()
-Plugin 'gmarik/vundle'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-fugitive'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'mustache/vim-mustache-handlebars'
-Plugin 'Gundo'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'mileszs/ack.vim'
-Plugin 'mattn/emmet-vim'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'mattn/webapi-vim'
-Plugin 'mattn/gist-vim'
-Plugin 'vim-stylus'
-Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
-filetype plugin indent on
+" For the list of default plugins and to install them check out the install
+" script in the `.dotfiles/scripts/install_vim_plugins.sh` script.
 
 " Hit <C-e> then <space> to trigger Emmet
 let g:user_emmet_leader_key = '<c-e>'
