@@ -9,6 +9,7 @@ declare -a urls=(
     "https://github.com/mattn/emmet-vim"
     "https://github.com/mattn/gist-vim"
     "https://github.com/mattn/webapi-vim"
+    "https://github.com/mbbill/undotree"
     "https://github.com/mileszs/ack.vim"
     "https://github.com/mustache/vim-mustache-handlebars"
     "https://github.com/plasticboy/vim-markdown"

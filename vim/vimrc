@@ -258,7 +258,8 @@ nnoremap <leader>tt I{% <ESC>A %}<ESC>
 " Insert template Markdown comment
 nnoremap <leader>mc I[//]: # (CHANGEME)<ESC>
 
-" Toggle Gundo
+" Toggle Undo tree (requires Undotree or Gundo)
+nnoremap <leader>u :UndotreeToggle<CR>
 nnoremap <leader>g :GundoToggle<CR>
 
 " Rspec mappings
