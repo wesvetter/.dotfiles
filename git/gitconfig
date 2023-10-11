@@ -51,3 +51,5 @@
   autoSetupRemote = true
 [github]
   user = wesvetter
+[init]
+  defaultBranch = main
