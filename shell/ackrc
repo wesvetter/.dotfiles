@@ -1,6 +1,10 @@
---type-add=markdown=.md,.markdown
---type-add=handlebars=.hbs
---type-add=hbs=.hbs
+--type-add=handlebars:ext:hbs
+--type-add=hbs:ext:hbs
+--type-add=markdown:ext:md,markdown
+--type-add=prisma:ext:prisma
+--type-add=tspec:match:/.*(spec|test).ts/
+--type-add=tsrc:match:/((?!spec.ts|test.ts).)*.ts/
+--type-add=tsx:ext:tsx
 
 # Ignore node_modules
 --ignore-dir=node_modules/
