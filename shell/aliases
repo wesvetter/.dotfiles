@@ -68,3 +68,6 @@ alias todo='ack TODO'
 alias fixme='ack FIXME'
 alias questions='ack ???'
 alias bugs='ack DEBUG'
+
+# Stay awake
+alias no-sleep='caffeinate -d'
