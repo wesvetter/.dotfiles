@@ -397,15 +397,18 @@ endif
 
 " Emoji shortcuts (common git commit emojis)
 ab :add_test: ✅
+ab :add_package: 📦
 ab :art: 🎨
 ab :bug: 🐛
 ab :config: 📇
 ab :docs: 📚
+ab :db: 💾
 ab :feature: ✨
 ab :fix_test: 💚
 ab :hotfix: 🔥
 ab :lint: 👕
-ab :log: 🔊
+ab :add_log: 🔊
+ab :remove_log: 🔇
 ab :perf: 🐎
 ab :poop: 💩 
 ab :refactor: ♻️
