@@ -398,6 +398,8 @@ endif
 " Emoji shortcuts (common git commit emojis)
 ab :add_test: ✅
 ab :add_package: 📦
+ab :upgrade: ⬆️
+ab :downgrade: ⬇️
 ab :art: 🎨
 ab :bug: 🐛
 ab :config: 📇
