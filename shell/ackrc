@@ -2,6 +2,8 @@
 --type-add=hbs:ext:hbs
 --type-add=markdown:ext:md,markdown
 --type-add=prisma:ext:prisma
+--type-add=rsrc:match:/^((?!spec.rb|test.rb).)*.(rb|rake)$/
+--type-add=rspec:match:/.*(spec|test).rb/
 --type-add=tspec:match:/.*(spec|test).ts/
 --type-add=tsrc:match:/^((?!spec.ts|test.ts).)*.ts$/
 --type-add=tsx:ext:tsx
