@@ -1,0 +1,50 @@
+#!/bin/zsh
+
+# tmux-start-dev
+#
+# Start a new tmux session with a predefined layout, which is comprised of
+# three windows:
+#
+# 1.  Shell (with two vertical panes)
+# 2.  Source
+# 3.  Test
+#
+# This is useful for bootstrapping a new development environment, where you
+# want to have a consistent layout for your tmux sessions.
+#
+# Install (make sure ~/.bin is in your PATH):
+# export PATH=$PATH:$HOME/.bin
+# ln -sf $HOME/.dotfiles/tmux/tmux-start-dev $HOME/.bin/tmux-start-dev
+#
+# Usage:
+# tmux-start-dev <session_name>
+
+# Check if an argument was provided
+if [[ -z "$1" ]]; then
+  echo "Usage: $0 <session_name>"
+  exit 1
+fi
+
+SESSION_NAME="$1"
+
+# Check if the session already exists
+if tmux has-session -t="$SESSION_NAME" 2>/dev/null; then
+  echo "Tmux session '$SESSION_NAME' already exists. Attaching..."
+  tmux attach-session -t="$SESSION_NAME"
+else
+  echo "Creating new Tmux session '$SESSION_NAME'..."
+  # Create a new session with three windows:
+  # 1.  Shell (with two vertical panes)
+  # 2.  Source
+  # 3.  Test
+  tmux new-session -s "$SESSION_NAME" -n Shell -d
+  # Unset the window-size option to allow the panes to be resized
+  #tmux set-window-option -t "$SESSION_NAME":1 window-size 'latest'
+  tmux split-window -h -t "$SESSION_NAME":1
+  tmux new-window -t "$SESSION_NAME" -n "Source"
+  tmux new-window -t "$SESSION_NAME" -n "Test"
+  tmux select-window -t "$SESSION_NAME":1
+fi
+
+# Attach to the session
+tmux attach-session -t "$SESSION_NAME"
