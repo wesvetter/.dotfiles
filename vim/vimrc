@@ -428,7 +428,7 @@ ab :table-flip:  (╯°□°）╯︵ ┻━┻
 " =========
 function! RunCurrentSpecFile()
   if InSpecFile()
-    let l:command = "s " . @% . " -f documentation"
+    let l:command = "bundle exec rspec " . @%
     call SetLastSpecCommand(l:command)
     call RunSpecs(l:command)
   endif
