@@ -203,6 +203,8 @@ nmap <leader>cc :set cc=80<CR>
 nmap <leader>jc :!pbpaste \| jq -c \| pbcopy<CR>
 nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
 
+" Reformat a selection (of SQL) using pg_format
+vmap <leader>pf :!pg_format<CR>
 
 " CSS commands:
 "--------------
