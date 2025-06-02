@@ -59,6 +59,9 @@ nametab() {echo -ne "\033]0;"$@"\007"}
 # Create/attach tmux session to ssh session
 function ssht(){ ssh $* -t 'tmux a || tmux || /bin/bash' }
 
+# Switch Tmux windows using fuzzy find
+alias t=~/.dotfiles/bin/tmux-fuzzy-switch.sh
+
 # I mean REALLY clear the terminal
 alias clear='clear ; clear ; clear'
 
