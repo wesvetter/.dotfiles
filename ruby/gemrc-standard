@@ -1,0 +1,4 @@
+# Thirty Madison uses a private gemset that requires keys in the `:sources:`
+# section, which is why this file isn't named `gemrc`.
+
+gem: --no-ri --no-rdoc
