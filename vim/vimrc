@@ -204,7 +204,7 @@ nmap <leader>jc :!pbpaste \| jq -c \| pbcopy<CR>
 nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
 
 " Reformat a selection (of SQL) using pg_format
-vmap <leader>pf :!pg_format<CR>
+vmap <leader>pf :!pg_format -g -k -s 2<CR>
 
 " Copy the current file path to the clipboard
 nnoremap <leader>cf :let @+ = expand('%')<CR>
