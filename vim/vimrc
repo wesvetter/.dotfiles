@@ -206,6 +206,13 @@ nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
 " Reformat a selection (of SQL) using pg_format
 vmap <leader>pf :!pg_format<CR>
 
+" Copy the current file path to the clipboard
+nnoremap <leader>cf :let @+ = expand('%')<CR>
+
+" Copy the absolute path of the current file to the clipboard
+nnoremap <leader>cF :let @+ = expand('%:p')<CR>
+
+
 " CSS commands:
 "--------------
 " Sort CSS properties alphabetically
