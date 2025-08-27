@@ -41,6 +41,8 @@ alias duh="du -h -d 1"
 alias files='du -h -d 1 | sort -h -r'
 alias gitka="gitk --all"
 alias gks="gitk --not prod"
+alias cursor-ide="/usr/local/bin/cursor"
+alias cursor="~/.local/bin/cursor-agent"
 
 # Re-open all source/test files changed in the previous commit.
 alias open-src="git diff --name-only HEAD~1 HEAD | grep -v spec | xargs vim"
