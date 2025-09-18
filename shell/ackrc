@@ -1,3 +1,4 @@
+# Custom types
 --type-add=handlebars:ext:hbs
 --type-add=hbs:ext:hbs
 --type-add=markdown:ext:md,markdown
@@ -8,7 +9,8 @@
 --type-add=tsrc:match:/^((?!spec.ts|test.ts).)*.ts$/
 --type-add=tsx:ext:tsx
 
-# Ignore node_modules
+# Ignore dependencies, coverage, and compiled directories
 --ignore-dir=node_modules/
 --ignore-dir=dist/
 --ignore-dir=build/
+--ignore-dir=coverage/
