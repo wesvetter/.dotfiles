@@ -20,6 +20,7 @@ pip-log.txt
 # Tests
 zeus.json
 custom_plan.rb
+coverage/
 
 # Python
 *.pyc
