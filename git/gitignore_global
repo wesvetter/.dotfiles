@@ -13,6 +13,10 @@
 *.log
 pip-log.txt
 
+# AI Prompt files
+*.prompt
+*.prompts
+
 # Tests
 zeus.json
 custom_plan.rb
