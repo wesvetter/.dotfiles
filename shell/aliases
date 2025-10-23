@@ -25,6 +25,9 @@ alias hg='history | grep'
 alias hfzf='history | fzf'
 alias hf='history | cut -c 8- | fzf'
 
+# Make `tree` actually good
+alias tree='tree -I "node_modules|dist|build|.git|coverage"'
+
 # Program aliases
 alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
 alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
