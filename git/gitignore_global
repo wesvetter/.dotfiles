@@ -6,6 +6,10 @@
 *.swp
 *.swo
 
+# AI Agents
+.claude
+.cursor
+
 # Compass
 .sass-cache
 
