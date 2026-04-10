@@ -21,6 +21,7 @@
   credit = commit --amend --author "$1 <$2>" -C HEAD
   troll = commit --allow-empty
   kosher = diff --check
+  mad = !git-mad
   ready = rebase -i @{u}
   purr = pull --rebase
   unstage = reset HEAD --

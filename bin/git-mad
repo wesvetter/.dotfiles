@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Switch to main (or master) and delete the previous branch.
+# Useful for cleaning up after merging a PR on GitHub.
+#
+
+prev=$(git rev-parse --abbrev-ref HEAD)
+target=$(git branch --list main master | sed 's/^[* ]*//' | head -1)
+
+if [ -z "$target" ]; then
+  echo "No main or master branch found"
+  exit 1
+fi
+
+if [ "$prev" = "$target" ]; then
+  echo "Already on $target"
+  exit 1
+fi
+
+git checkout "$target" && git pull && git branch -D "$prev"
