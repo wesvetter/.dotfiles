@@ -16,11 +16,4 @@ for topic in $topics; do
   done
 done
 
-# copy "binary" files
-cd $HOME/.dotfiles/bin
-for bin in `ls`; do
-  ln -sf $HOME/.dotfiles/bin/$bin $HOME/.bin/$bin
-  #echo "ln -sf $HOME/.dotfiles/bin/$bin $HOME/.bin/$bin"
-done
-
 echo "done"

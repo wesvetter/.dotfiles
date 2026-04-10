@@ -83,6 +83,7 @@ plugins=(git notify)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
+export PATH=$HOME/.dotfiles/bin:$PATH
 source $ZSH/oh-my-zsh.sh
 source ~/.aliases
 source ~/.zsh-local
