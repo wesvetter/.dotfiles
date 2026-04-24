@@ -78,12 +78,15 @@ DISABLE_AUTO_TITLE="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git notify)
+if [[ "$(uname)" == "Darwin" ]]; then
+  plugins=(git notify)
+else
+  plugins=(git)
+fi
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-source $ZSH/oh-my-zsh.sh
 source ~/.aliases
 source ~/.zsh-local
 

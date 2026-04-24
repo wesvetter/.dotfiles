@@ -31,7 +31,11 @@ let g:mustache_abbreviations = 1
 " ===================================
 syntax on                       " syntax highlighting on
 set nocompatible                " get rid of strict vi compatibility
-set clipboard=unnamed           " share clipboard buffer on OS X
+if has('mac') || has('macunix')
+  set clipboard=unnamed         " share clipboard buffer on OS X
+else
+  set clipboard=unnamedplus     " share clipboard buffer on Linux
+endif
 set nu                          " line numbering on
 set showmatch                   " highlight matching pairs of brackets
 set modeline                    " show what I'm doing
@@ -200,8 +204,13 @@ nmap <leader>c :setlocal nowrap<CR>:setlocal nolbr<CR>:setlocal nu<CR>:set nospe
 nmap <leader>cc :set cc=80<CR>
 
 " Compress/format JSON in paste buffer
-nmap <leader>jc :!pbpaste \| jq -c \| pbcopy<CR>
-nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
+if has('mac') || has('macunix')
+  nmap <leader>jc :!pbpaste \| jq -c \| pbcopy<CR>
+  nmap <leader>jf :!pbpaste \| jq -M \| pbcopy<CR>
+else
+  nmap <leader>jc :!xsel -bo \| jq -c \| xsel -bi<CR>
+  nmap <leader>jf :!xsel -bo \| jq -M \| xsel -bi<CR>
+endif
 
 " Reformat a selection (of SQL) using pg_format
 vmap <leader>pf :!pg_format -g -k -s 2<CR>
