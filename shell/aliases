@@ -1,15 +1,17 @@
-# Folder aliases
-alias code='cd ~/Desktop/Code/'
-alias blog='cd ~/Desktop/Code/wesvetter.github.io'
-alias haiti='cd ~/Desktop/Code/whwn/'
-alias dh='cd ~/Desktop/Code/distributedhealth/'
-alias urp='cd ~/Desktop/Code/ug_research_portal'
-alias reu='cd ~/Desktop/Code/reumanager/'
-alias buzz='cd ~/Desktop/Code/buzzmgr/'
+# Folder aliases (Mac paths — add machine-specific paths to ~/.zsh-local)
+if [[ "$(uname)" == "Darwin" ]]; then
+  alias code='cd ~/Desktop/Code/'
+  alias blog='cd ~/Desktop/Code/wesvetter.github.io'
+  alias haiti='cd ~/Desktop/Code/whwn/'
+  alias dh='cd ~/Desktop/Code/distributedhealth/'
+  alias urp='cd ~/Desktop/Code/ug_research_portal'
+  alias reu='cd ~/Desktop/Code/reumanager/'
+  alias buzz='cd ~/Desktop/Code/buzzmgr/'
+fi
 alias dotfiles='cd ~/.dotfiles'
 
 # SSH aliases
-alias rpi='ssh 192.168.1.72 -l pi'
+[[ "$(uname)" == "Darwin" ]] && alias rpi='ssh 192.168.1.72 -l pi'
 alias lgin='ssh wvetter@ieng6.ucsd.edu'
 alias surp='ssh ubuntu@indra.ucsd.edu'
 
@@ -29,23 +31,27 @@ alias hf='history | cut -c 8- | fzf'
 alias tree='tree -I "node_modules|dist|build|.git|coverage"'
 
 # Program aliases
-alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
-alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+if [[ "$(uname)" == "Darwin" ]]; then
+  alias vim='~/../../Applications/MacVim.app/Contents/MacOS/Vim'
+  alias gvim='~/../../Applications/MacVim.app/Contents/MacOS/Vim -g'
+  alias top='top -o cpu'
+  alias start_pg='postgres -D /usr/local/var/postgres'
+  alias cursor-ide='/usr/local/bin/cursor'
+  alias cursor='~/.local/bin/cursor-agent'
+else
+  alias top='top -o %CPU'
+fi
 alias e='vim'
 alias git='hub'
 alias gti='hub'
 alias gitout='git --no-pager'
 alias gpp='g++'
 alias canhaz='sudo apt-get install'
-alias top='top -o cpu'
 alias untar='tar xvfz'
-alias start_pg='postgres -D /usr/local/var/postgres'
 alias duh="du -h -d 1"
 alias files='du -h -d 1 2>/dev/null | sort -h -r'
 alias gitka="gitk --all"
 alias gks="gitk --not prod"
-alias cursor-ide="/usr/local/bin/cursor"
-alias cursor="~/.local/bin/cursor-agent"
 
 # Re-open all source/test files changed in the previous commit.
 alias open-src="git diff --name-only HEAD~1 HEAD | grep -v spec | xargs vim"
@@ -58,8 +64,8 @@ alias npmls='npm ls --depth=0 "$@" 2>/dev/null'
 alias pryc='pry -r ./config/environment'
 alias ackr='ack --ignore-dir=log'
 
-# Rename iTerm2 tab
-nametab() {echo -ne "\033]0;"$@"\007"}
+# Rename iTerm2 tab (macOS/iTerm2 only)
+[[ "$(uname)" == "Darwin" ]] && nametab() { echo -ne "\033]0;"$@"\007" }
 
 # Create/attach tmux session to ssh session
 function ssht(){ ssh $* -t 'tmux a || tmux || /bin/bash' }
@@ -71,7 +77,11 @@ alias t=~/.dotfiles/bin/tmux-fuzzy-switch.sh
 alias clear='clear ; clear ; clear'
 
 # useful `ls` mods
-alias ls='ls -G'                 # not sure if different from --color=tty
+if [[ "$(uname)" == "Darwin" ]]; then
+  alias ls='ls -G'
+else
+  alias ls='ls --color=auto'
+fi
 alias l.='ls -d .*'              # lists all dot files
 alias ll='ls -l'                 # detailed file view (not hidden files though)
 alias ldir='ls -d */'            # list only directories
@@ -82,5 +92,5 @@ alias fixme='ack FIXME'
 alias questions='ack ???'
 alias bugs='ack DEBUG'
 
-# Stay awake
-alias no-sleep='caffeinate -d'
+# Stay awake (macOS only)
+[[ "$(uname)" == "Darwin" ]] && alias no-sleep='caffeinate -d'

@@ -46,8 +46,6 @@
   added = yellow
   changed = green
   untracked = cyan
-[credential]
-  helper = osxkeychain
 [push]
   default = current
   autoSetupRemote = true
@@ -55,3 +53,6 @@
   user = wesvetter
 [init]
   defaultBranch = main
+
+[include]
+  path = ~/.gitconfig.local
