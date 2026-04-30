@@ -9,6 +9,7 @@
 # AI Agents
 .claude
 .cursor
+.codex
 
 # Compass
 .sass-cache
