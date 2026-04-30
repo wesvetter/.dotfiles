@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#
+# notify - cross-platform desktop notification wrapper.
+#
+# Accepts the subset of terminal-notifier flags we use:
+#   notify -message MSG [-title TITLE] [-sound NAME]
+#
+# macOS: delegates to terminal-notifier.
+# Linux: prints "title: message" to stderr with a terminal bell, and
+#        also shows a tmux status message when $TMUX is set. -sound
+#        is ignored.
+
+set -eu
+
+message=""
+title=""
+sound=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -message) message="${2:-}"; shift 2 ;;
+    -title)   title="${2:-}";   shift 2 ;;
+    -sound)   sound="${2:-}";   shift 2 ;;
+    *)        shift ;;
+  esac
+done
+
+label="${title:+$title: }$message"
+
+case "$(uname -s)" in
+  Darwin)
+    args=(-message "$message")
+    [ -n "$title" ] && args+=(-title "$title")
+    [ -n "$sound" ] && args+=(-sound "$sound")
+    exec terminal-notifier "${args[@]}"
+    ;;
+  Linux)
+    if [ -n "${TMUX:-}" ] && command -v tmux >/dev/null 2>&1; then
+      tmux display-message "$label" || true
+    fi
+    printf '\a%s\n' "$label" >&2
+    ;;
+  *)
+    printf '%s\n' "$label" >&2
+    ;;
+esac

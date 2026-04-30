@@ -1,0 +1,54 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ack *)",
+      "Bash(cat *)",
+      "Bash(du:*)",
+      "Bash(echo *)",
+      "Bash(find:*)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git status)",
+      "Bash(grep *)",
+      "Bash(head *)",
+      "Bash(ls *)",
+      "Bash(pbcopy *)",
+      "Bash(printf *)",
+      "Bash(tail *)",
+      "Bash(notify *)",
+      "Bash(wc *)",
+      "Bash(which *)",
+      "Bash(yarn test *)"
+    ]
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify -message \"Waiting for input\" -title \"Claude Code\" -sound Glass"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify -message \"Task completed\" -title \"Claude Code\" -sound Glass"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "ruby-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "editorMode": "vim",
+  "verbose": true
+}

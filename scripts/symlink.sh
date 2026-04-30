@@ -16,4 +16,12 @@ for topic in $topics; do
   done
 done
 
+# claude: files live inside ~/.claude/, not as ~/.<file>
+mkdir -p $HOME/.claude
+cd $HOME/.dotfiles/claude
+for file in `ls`; do
+  ln -sf $HOME/.dotfiles/claude/$file $HOME/.claude/$file
+  echo "ln -sf $HOME/.dotfiles/claude/$file $HOME/.claude/$file"
+done
+
 echo "done"
