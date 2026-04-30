@@ -61,11 +61,11 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - **`--fix` handles body wrapping for you.** Subject-line errors (length, capitalization, trailing period) and missing-blank-line errors are **not** auto-fixed — revise the draft and re-run.
    - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it; never accept errors.
 
-8. **Copy to clipboard.** On macOS:
+8. **Copy to clipboard.** Pipe through `~/.dotfiles/bin/clipcopy`, which picks the right backend for the current host (`pbcopy` on macOS, `wl-copy` on Wayland, `xclip` on X11, `tmux load-buffer -` inside tmux):
    ```bash
-   ~/.dotfiles/bin/lint-commit-msg.mjs --fix <<< "<draft>" | pbcopy
+   ~/.dotfiles/bin/lint-commit-msg.mjs --fix <<< "<draft>" | ~/.dotfiles/bin/clipcopy
    ```
-   On Linux: prefer `xclip -selection clipboard` or `wl-copy`; if neither exists (e.g. headless Pi), print the final message and tell the user it couldn't be copied.
+   If `clipcopy` exits non-zero (no backend available — e.g. headless Pi outside tmux), print the final message and tell the user it couldn't be copied.
 
 9. **Report to the user.**
    - Resolved repo path (so a wrong target gets caught before commit).
