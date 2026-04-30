@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [ -z "${repo_root}" ]; then
+  exit 0
+fi
+
+if [ ! -d "${repo_root}/claude/skills" ]; then
+  exit 0
+fi
+
+if [ ! -x "${repo_root}/scripts/sync-claude-to-codex.mjs" ]; then
+  exit 0
+fi
+
+empty_tree="$(git hash-object -t tree /dev/null)"
+skills_changed=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -n "${local_ref}" ] || continue
+
+  if [[ "${local_sha}" =~ ^0+$ ]]; then
+    continue
+  fi
+
+  base_sha="${remote_sha}"
+  if [[ "${remote_sha}" =~ ^0+$ ]]; then
+    base_sha="${empty_tree}"
+  fi
+
+  if ! git diff --quiet "${base_sha}" "${local_sha}" -- claude/skills; then
+    skills_changed=1
+    break
+  fi
+done
+
+if [ "${skills_changed}" -eq 0 ]; then
+  exit 0
+fi
+
+tmpdir="$(mktemp -d)"
+cleanup() {
+  rm -rf "${tmpdir}"
+}
+trap cleanup EXIT
+
+git -C "${repo_root}" archive HEAD | tar -x -C "${tmpdir}"
+
+if ! (
+  cd "${tmpdir}"
+  ./scripts/sync-claude-to-codex.mjs --check >/dev/null
+); then
+  cat >&2 <<'EOF'
+Push blocked: this push includes changes under `claude/skills`, but the
+committed Codex-derived skill files are stale.
+
+Run:
+  ./scripts/sync-claude-to-codex.mjs
+
+Then stage and commit the updated files under `codex/generated/skills/`
+(and `codex/generated/README.md` if it changed), then push again.
+EOF
+  exit 1
+fi
