@@ -41,4 +41,6 @@ if [ -d $HOME/.dotfiles/claude/skills ]; then
   done
 fi
 
+$HOME/.dotfiles/scripts/install-codex-config.sh
+
 echo "done"
