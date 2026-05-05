@@ -49,6 +49,7 @@
     "ruby-lsp@claude-plugins-official": true
   },
   "effortLevel": "high",
+  "autoMemoryEnabled": false,
   "editorMode": "vim",
   "verbose": true
 }
