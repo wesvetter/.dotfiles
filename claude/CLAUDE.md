@@ -22,3 +22,6 @@ When modifying or expanding new code, **always** use the red/green test-driven d
 
 Before making changes to the codebase, always ask about the testing strategy for those changes. This includes asking about unit tests, integration tests, end-to-end tests, and any other relevant testing approaches.
 
+# Always conform to git commit styleguide
+
+Whenever asked to write a commit message, **always** adhere to the conventions outlined in the `commit-message` skill.
