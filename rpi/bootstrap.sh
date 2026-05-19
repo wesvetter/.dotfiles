@@ -48,6 +48,10 @@ bash "$DOTFILES/scripts/symlink.sh"
 echo "==> Installing Vim plugins..."
 bash "$DOTFILES/scripts/install_vim_plugins.sh"
 
+echo "==> Installing weekly update automation..."
+sudo install -m 0755 "$DOTFILES/rpi/pi-weekly-update.sh" /usr/local/bin/pi-weekly-update.sh
+sudo install -m 0644 "$DOTFILES/rpi/pi-weekly-updates.cron" /etc/cron.d/pi-weekly-updates
+
 echo "==> Writing ~/.gitconfig.local..."
 if [ ! -f "$HOME/.gitconfig.local" ]; then
   cat > "$HOME/.gitconfig.local" <<EOF

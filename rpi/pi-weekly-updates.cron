@@ -1,0 +1,4 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 2 * * 0 root /usr/local/bin/pi-weekly-update.sh >> /var/log/pi-weekly-update.log 2>&1

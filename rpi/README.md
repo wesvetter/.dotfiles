@@ -6,6 +6,8 @@ Initial machine setup is handled by:
 
 - `~/.dotfiles/rpi/bootstrap.sh`
 - `~/.dotfiles/rpi/apt_installs.sh`
+- `~/.dotfiles/rpi/pi-weekly-update.sh`
+- `~/.dotfiles/rpi/pi-weekly-updates.cron`
 
 Run the bootstrap script on a fresh Raspberry Pi OS install:
 
@@ -20,7 +22,8 @@ This Pi is configured to install OS package updates every Sunday at
 
 Cron file:
 
-- `/etc/cron.d/pi-weekly-updates`
+- Tracked source: `~/.dotfiles/rpi/pi-weekly-updates.cron`
+- Installed file: `/etc/cron.d/pi-weekly-updates`
 
 Installed schedule:
 
@@ -30,7 +33,8 @@ Installed schedule:
 
 Update script:
 
-- `/usr/local/bin/pi-weekly-update.sh`
+- Tracked source: `~/.dotfiles/rpi/pi-weekly-update.sh`
+- Installed file: `/usr/local/bin/pi-weekly-update.sh`
 
 The script runs:
 
@@ -53,9 +57,6 @@ If that file exists, the script schedules:
 ```bash
 shutdown -r +5 "Automatic reboot after weekly updates"
 ```
-
-That means a required reboot should happen at about `2:05 AM`.
-
 ## Logging
 
 Weekly maintenance logs are written to:
@@ -65,8 +66,10 @@ Weekly maintenance logs are written to:
 The log explicitly records:
 
 - when maintenance starts
+- when each `apt-get` step starts and finishes
 - whether a reboot was required
 - whether reboot was skipped
+- whether the script exited early and during which step
 
 Useful checks:
 
@@ -74,4 +77,5 @@ Useful checks:
 sudo cat /etc/cron.d/pi-weekly-updates
 sudo cat /usr/local/bin/pi-weekly-update.sh
 sudo tail -n 50 /var/log/pi-weekly-update.log
+sudo grep -n "Starting weekly package maintenance\|Starting:\|Completed:\|Reboot required\|Reboot not required\|Maintenance aborted" /var/log/pi-weekly-update.log
 ```
