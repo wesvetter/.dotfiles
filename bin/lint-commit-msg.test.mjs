@@ -90,10 +90,17 @@ test("--fix keeps a fully-quoted line intact (exempt)", () => {
   assert.equal(status, 0);
 });
 
-test("--fix does not modify already-short paragraphs", () => {
-  const input = ["Subject", "", "Short body line.", "Another short line."].join("\n");
+test("--fix leaves a single already-short line unchanged", () => {
+  const input = ["Subject", "", "Short body line."].join("\n");
   const { stdout, status } = run(input, ["--fix"]);
   assert.equal(stdout.replace(/\n+$/, ""), input);
+  assert.equal(status, 0);
+});
+
+test("--fix greedily re-packs a multi-line short paragraph (Vim gq behavior)", () => {
+  const input = ["Subject", "", "Short body line.", "Another short line."].join("\n");
+  const { stdout, status } = run(input, ["--fix"]);
+  assert.deepEqual(bodyLines(stdout), ["Short body line. Another short line."]);
   assert.equal(status, 0);
 });
 

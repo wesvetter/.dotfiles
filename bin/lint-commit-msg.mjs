@@ -85,12 +85,11 @@ function fixCommitMessage(message) {
   let para = [];
   const flush = () => {
     if (para.length === 0) return;
-    const needsReflow = para.some((l) => l.length > BODY_WIDTH);
-    if (needsReflow) {
-      out.push(...reflowParagraph(para, BODY_WIDTH));
-    } else {
-      out.push(...para);
-    }
+    // Greedily re-pack every paragraph (matching Vim's `gq`/`textwidth`
+    // behavior) rather than only touching paragraphs with an over-width
+    // line. A single short line round-trips through reflowParagraph
+    // unchanged, so this only has a visible effect on multi-line paragraphs.
+    out.push(...reflowParagraph(para, BODY_WIDTH));
     para = [];
   };
 
