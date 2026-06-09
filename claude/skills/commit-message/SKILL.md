@@ -100,6 +100,7 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 | 👕 | Linting or code style changes |
 | 🧪 | Add/update feature flag or experiment |
 | 🧹 | Clean up (e.g. removing unused code, feature flags) |
+| 📱 | Mobile-specific fix/improvement |
 | 🗑️ | Remove code or files |
 | 🚧 | Work in progress |
 | 🔊 | Add logging |
