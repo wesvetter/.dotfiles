@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+#
+# local-reminder - schedule a one-off local desktop notification that fires
+# after a delay, surviving the parent shell / agent session.
+#
+# The launcher spawns a detached `nohup` child that sleeps until the fire
+# time and then posts a macOS notification. Because the child is nohup'd and
+# has its stdio redirected, it is reparented to launchd when the invoking
+# shell (or Claude/Codex session) exits, so the reminder still fires.
+#
+# Usage:
+#   local-reminder --in SECONDS --message MSG [--title TITLE] [--sound NAME]
+#
+# macOS only. On any other platform it prints an error and exits 1.
+
+set -euo pipefail
+
+# --- macOS gate --------------------------------------------------------------
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "local-reminder: only supported on macOS" >&2
+  exit 1
+fi
+
+log_file="${HOME}/.cache/local-reminder.log"
+
+notify() {
+  # notify TITLE MESSAGE SOUND  — argv-based so arbitrary text is safe.
+  local title="$1" message="$2" sound="$3"
+  if command -v terminal-notifier >/dev/null 2>&1; then
+    terminal-notifier -title "$title" -message "$message" -sound "$sound"
+  else
+    # Built-in fallback. osascript sound names differ; map "default".
+    local osa_sound="$sound"
+    [ "$osa_sound" = "default" ] && osa_sound="Submarine"
+    osascript \
+      -e 'on run {t, m, s}' \
+      -e 'display notification m with title t sound name s' \
+      -e 'end run' \
+      "$title" "$message" "$osa_sound"
+  fi
+}
+
+# --- internal fire mode (runs in the detached child) -------------------------
+if [ "${1:-}" = "--__fire" ]; then
+  shift
+  fire_seconds="$1"; fire_title="$2"; fire_message="$3"; fire_sound="$4"
+  sleep "$fire_seconds"
+  notify "$fire_title" "$fire_message" "$fire_sound"
+  mkdir -p "$(dirname "$log_file")"
+  printf '%s  FIRED   %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$fire_message" >>"$log_file"
+  exit 0
+fi
+
+# --- argument parsing --------------------------------------------------------
+seconds=""
+message=""
+title="Reminder"
+sound="default"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --in)      seconds="${2:-}"; shift 2 ;;
+    --message) message="${2:-}"; shift 2 ;;
+    --title)   title="${2:-}";   shift 2 ;;
+    --sound)   sound="${2:-}";   shift 2 ;;
+    -h|--help)
+      sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0 ;;
+    *) echo "local-reminder: unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+
+case "$seconds" in
+  ''|*[!0-9]*) echo "local-reminder: --in must be a positive integer (seconds)" >&2; exit 2 ;;
+esac
+[ "$seconds" -gt 0 ] || { echo "local-reminder: --in must be greater than 0" >&2; exit 2; }
+[ -n "$message" ] || { echo "local-reminder: --message is required" >&2; exit 2; }
+
+# Resolve an absolute path to this script so the detached child can re-exec it
+# regardless of the caller's working directory.
+self="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
+fire_at="$(date -v +"${seconds}"S '+%Y-%m-%d %H:%M:%S')"
+
+mkdir -p "$(dirname "$log_file")"
+printf '%s  SCHED   in %ss -> %s | %s\n' \
+  "$(date '+%Y-%m-%d %H:%M:%S')" "$seconds" "$fire_at" "$message" >>"$log_file"
+
+# Spawn the detached sleeper. Redirecting all fds is what lets the Bash tool /
+# parent shell return without waiting, and nohup keeps it alive past SIGHUP.
+nohup "$self" --__fire "$seconds" "$title" "$message" "$sound" \
+  >/dev/null 2>&1 &
+disown
+
+echo "⏰ Reminder set: \"$message\""
+echo "   fires at $fire_at (in ${seconds}s)"
