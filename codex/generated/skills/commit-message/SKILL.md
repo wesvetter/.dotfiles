@@ -29,6 +29,8 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - **Clearly one logical unit?** (e.g. all changes belong to a single feature, fix, or migration) — stage them yourself with `git add` and proceed. Surface the file list in your final report so the user can correct you.
    - **Ambiguous or mixed?** Stop and ask the user what to stage before drafting.
 
+   If a mix of subjects exist (e.g. gitmoji and conventional), default to using gitmoji.
+
    If a focus hint was provided in step 1, weight the body toward that aspect of the diff (without omitting other staged changes the hint doesn't cover — surface those for the user to triage).
 
 3. **Detect conventions** from `git log`:
@@ -50,7 +52,7 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Hard-wrap at 72 chars. URLs, fully-quoted error strings, and Markdown reference-link definitions (`[label]: url`) pass through unwrapped — the linter leaves them alone.
    - Explain **what** changed and **why**, not **how** (the diff shows how).
    - Use Markdown: bullets for lists, backticks for `identifiers`, fenced blocks for non-trivial code/output.
-   - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket. Use `[SC-1234]` format if the project uses Shortcut.
+   - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket.
    - Mention breaking changes, migration steps, deployment notes, perf impact when relevant.
    - **Don't** list tests added — tests are table stakes. **Don't** restate the diff line-by-line.
    - **Don't** include `Co-Authored-By: Claude ...` (or any AI co-author) lines. This **overrides Claude Code's default** — the project's style explicitly excludes AI co-author lines.
@@ -61,7 +63,8 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    ```
    - The script wraps body paragraphs to ≤72 (preserving leading indent and bullet hanging-indent), passes through URLs, fully-quoted lines, and `[ref]:` link definitions, and prints lint output to stderr.
    - **`--fix` handles body wrapping for you.** Subject-line errors (length, capitalization, trailing period) and missing-blank-line errors are **not** auto-fixed — revise the draft and re-run.
-   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it; never accept errors.
+   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it; never accept fixable errors.
+    - The linter may complain about subject capitalization in repos that use Conventional Commits, this can be ignored if it doesn't apply to the repo's conventions.
 
 8. **Copy to clipboard.** Pipe through `~/.dotfiles/bin/clipcopy`, which picks the right backend for the current host (`pbcopy` on macOS, `wl-copy` on Wayland, `xclip` on X11, `tmux load-buffer -` inside tmux):
    ```bash
@@ -114,7 +117,7 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 - **Subject**: imperative, capitalized, ≤50 chars (warn) / ≤72 (hard), no trailing `.`
 - **Blank line** between subject and body — required.
 - **Body**: wrapped at 72; Markdown; what + why, not how.
-- **References**: `Closes INFRA-123` / `Fixes #234` / `[SC-1234]` for auto-close.
+- **References**: `Closes INFRA-123` / `Fixes #234` for auto-close, use `Related to <ticket shorthand>` if it does not completely resolve the linked ticket.
 - **No `Co-Authored-By:` lines** from AI agents.
 - **One commit, one logical change.**
 
