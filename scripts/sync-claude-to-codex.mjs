@@ -82,7 +82,7 @@ function renderReport(skillNames) {
   lines.push("- `claude/skills/**` remains the source of truth for portable custom skills.");
   lines.push("");
   lines.push("Install flow:");
-  lines.push("1. Run `./scripts/install-codex-config.sh` to symlink generated skills into `~/.codex/skills/`.");
+  lines.push("1. Run `./scripts/install-codex-config.sh` to symlink generated skills into `~/.agents/skills/`.");
   lines.push("2. For this repo and any other repo that should inherit this guidance, symlink `AGENTS.md` to `claude/CLAUDE.md`.");
   lines.push("3. `./scripts/link-codex-agents.sh /path/to/repo` creates that symlink for another repo.");
   lines.push("");

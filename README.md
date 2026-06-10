@@ -10,7 +10,7 @@ Configuration for setting up a new MacBook Pro can be found in `SETUP.md`.
 Claude remains the source of truth for portable agent guidance. Run
 `./scripts/sync-claude-to-codex.mjs` to derive Codex artifacts, then
 `./scripts/install-codex-config.sh` to symlink the generated Codex skills into
-`~/.codex/skills/`. Repo-root `AGENTS.md` should symlink to
+`~/.agents/skills/`. Repo-root `AGENTS.md` should symlink to
 `claude/CLAUDE.md`.
 
 Run `./scripts/install-dotfiles-git-hooks.sh` in this repo to enable the
