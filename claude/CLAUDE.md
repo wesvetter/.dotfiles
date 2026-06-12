@@ -48,3 +48,6 @@ validate-address-input-on-dashboard-with-easypost-api
 fix-typo-in-user-model-and-update-documentation-to-reflect-change
 temporary-branch-to-resolve-conflicts-between-feature-branch-and-main-branch-before-merging
 ```
+# Don't mutate 3rd party systems without explicit instructions
+
+When working with 3rd party systems, such as GitHub, Linear, Slack, etc., do not take any "write" actions (e.g. merging a PR, closing a ticket, posting a message in a channel) **without explicit instructions to do so**. **Always ask for confirmation** before taking any actions in these systems to ensure that you are acting in accordance with the expectations of the team and the project. Assume that any action to will be handled by a human first, and default to copying output to the paste buffer rather than taking the action yourself.
