@@ -25,3 +25,26 @@ Before making changes to the codebase, always ask about the testing strategy for
 # Always conform to git commit styleguide
 
 Whenever asked to write a commit message, **always** adhere to the conventions outlined in the `commit-message` skill.
+
+# Do not create super long branch names
+
+Instead, use concise branch names that are easy to read. My terminal is configured to print the branch name in the prompt, and long branch names can make it borderline unusable. Never put an issue/ticket number in the branch name, and never put a username in the branch name.
+
+Good:
+
+```
+add-new-login-endpoint
+better-address-validation
+fix-typo-in-user-model
+tmp-resolve-conflicts
+refactor-dashboard-ui--1-of-2
+```
+
+Bad:
+
+```
+wesvetter/issue-12345-add-new-login-endpoint-and-improve-error-handling
+validate-address-input-on-dashboard-with-easypost-api
+fix-typo-in-user-model-and-update-documentation-to-reflect-change
+temporary-branch-to-resolve-conflicts-between-feature-branch-and-main-branch-before-merging
+```
