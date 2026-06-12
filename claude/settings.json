@@ -51,5 +51,6 @@
   "effortLevel": "high",
   "autoMemoryEnabled": false,
   "editorMode": "vim",
-  "verbose": true
+  "verbose": true,
+  "agentPushNotifEnabled": true
 }
