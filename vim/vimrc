@@ -416,6 +416,7 @@ endif
 " Emoji shortcuts (common git commit emojis)
 ab :add_test: ✅
 ab :add_package: 📦
+ab :agent: 🧠
 ab :upgrade: ⬆️
 ab :downgrade: ⬇️
 ab :art: 🎨

@@ -96,6 +96,7 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 | 📚 | Documentation updates |
 | 📇 | Configuration changes |
 | 💾 | Database changes |
+| 🧠 | Agent or model related changes |
 | 🔧 | Tooling changes |
 | 👕 | Linting or code style changes |
 | 🧪 | Add/update feature flag or experiment |
