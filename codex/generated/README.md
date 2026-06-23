@@ -4,6 +4,7 @@ Claude remains the source of truth. These files are derived by `scripts/sync-cla
 
 Generated files:
 - `codex/generated/skills/commit-message/SKILL.md`
+- `codex/generated/skills/deslop/SKILL.md`
 - `codex/generated/skills/local-reminder/SKILL.md`
 
 Portable layout:
