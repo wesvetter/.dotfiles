@@ -51,3 +51,31 @@ temporary-branch-to-resolve-conflicts-between-feature-branch-and-main-branch-bef
 # Don't mutate 3rd party systems without explicit instructions
 
 When working with 3rd party systems, such as GitHub, Linear, Slack, etc., do not take any "write" actions (e.g. merging a PR, closing a ticket, posting a message in a channel) **without explicit instructions to do so**. **Always ask for confirmation** before taking any actions in these systems to ensure that you are acting in accordance with the expectations of the team and the project. Assume that any action to will be handled by a human first, and default to copying output to the paste buffer rather than taking the action yourself.
+
+# Avoid excessive narration of code
+
+When writing source code and tests, avoid excessive narration of the code. Instead, focus on writing clear and concise code that is self-explanatory. Use comments sparingly and only when necessary to clarify complex logic or decisions. Assume the reader of the code is familiar with the programming language and the context of the codebase.
+
+# Write plainly
+
+Prefer simple and common words to convey your ideas.
+
+Examples:
+
+| ❌ Avoid | ✅ Prefer |
+| --- | --- |
+| "The function mints a JSON token ..." | "The function creates a JSON token ..." |
+| "... rides along the flag to the next function." | "... passes the flag to the next function." |
+| "The function folds in the new data ..." | "The function merges the new data ..." |
+| "The function stamps the identifier ..." | "The function sets an identifier ..." |
+| "The design keeps faith with ..." | "The design is consistent with ..." |
+| "The design avoids a flag day ..." | "The design avoids a breaking API change ..." |
+
+For technical writing, avoid modifiers like "genuinely", "truly", "actually" unless they are necessary to convey the intended meaning (e.g. "Alice lied about being allergic to peanuts but actually ate my Reese's cups yesterday.").
+
+Examples:
+
+| ❌ Avoid | ✅ Prefer |
+| --- | --- |
+| "The function is genuinely complex and requires a deep understanding of the underlying algorithms." | "The function is complex and requires a deep understanding of the underlying algorithms." |
+
