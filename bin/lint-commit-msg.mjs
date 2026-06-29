@@ -18,6 +18,28 @@
 
 const BODY_WIDTH = 72;
 
+// Common Conventional Commit types. A subject that opens with one of these,
+// optionally followed by a (scope) and/or a breaking-change "!", is exempt
+// from the capital-letter rule (e.g. "feat: ...", "feat(api)!: ...").
+const CONVENTIONAL_COMMIT_TYPES = [
+  "feat",
+  "fix",
+  "bug",
+  "chore",
+  "docs",
+  "style",
+  "refactor",
+  "perf",
+  "test",
+  "build",
+  "ci",
+  "revert",
+];
+
+const CONVENTIONAL_PREFIX = new RegExp(
+  `^(?:${CONVENTIONAL_COMMIT_TYPES.join("|")})(?:\\([^)]+\\))?!?:`
+);
+
 function isExemptLine(line) {
   return (
     /^\s*https?:\/\//.test(line) ||
@@ -134,8 +156,7 @@ function lintCommitMessage(message) {
 
   const firstAlpha = subject.match(/[a-zA-Z]/);
   if (firstAlpha && firstAlpha[0] !== firstAlpha[0].toUpperCase()) {
-    const prefixMatch = subject.match(/^[a-z][a-zA-Z0-9_-]*:/);
-    if (!prefixMatch) {
+    if (!CONVENTIONAL_PREFIX.test(subject)) {
       errors.push(`Subject line must start with a capital letter: "${subject}"`);
     }
   }

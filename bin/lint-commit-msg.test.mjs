@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { test } from "node:test";
+import { test, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -166,4 +166,41 @@ test("without --fix, original behavior preserved (errors on stdout, exit 1)", ()
   const { status, stdout } = run(input);
   assert.equal(status, 1);
   assert.match(stdout, /Body line/);
+});
+
+describe("Conventional Commit prefixes", () => {
+  describe("when the subject uses a known prefix", () => {
+    it("does not require a capital letter after the prefix", () => {
+      const { status, stdout } = run("feat: add a login endpoint");
+      assert.equal(status, 0, stdout);
+    });
+
+    it("ignores a scoped prefix", () => {
+      const { status, stdout } = run("feat(api): add a login endpoint");
+      assert.equal(status, 0, stdout);
+    });
+
+    it("ignores a breaking-change prefix", () => {
+      const { status, stdout } = run("feat!: drop support for node 18");
+      assert.equal(status, 0, stdout);
+    });
+
+    it("ignores a scoped breaking-change prefix", () => {
+      const { status, stdout } = run("feat(api)!: drop the v1 endpoint");
+      assert.equal(status, 0, stdout);
+    });
+
+    it("ignores the bug prefix", () => {
+      const { status, stdout } = run("bug: stop double-charging on retry");
+      assert.equal(status, 0, stdout);
+    });
+  });
+
+  describe("when the subject uses an unrecognized prefix", () => {
+    it("still requires a capital letter", () => {
+      const { status, stdout } = run("note: remember to backfill later");
+      assert.equal(status, 1);
+      assert.match(stdout, /must start with a capital letter/);
+    });
+  });
 });
