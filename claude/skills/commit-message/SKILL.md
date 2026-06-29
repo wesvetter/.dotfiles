@@ -40,16 +40,18 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
 
 5. **Draft the subject line.**
    - Imperative mood: completes "If applied, this commit will ... (`Fix`, `Add`, `Update`, `Remove`, `Refactor`).
-   - Capitalize the first letter (exception: lowercase code identifiers like `npm:`, `iOS:`, `datadog-metrics:`).
+   - Capitalize the first letter (exception: lowercase code identifiers like `npm:`, `iOS:`, `datadog-metrics:` or Conventional Commit prefixes like `feat:`, `bug:`).
    - No trailing period. (`?` and `!` are fine when warranted.)
    - Aim for ≤50 chars; never exceed 72.
    - Optional leading emoji if the repo uses them.
+   - Use Markdown backticks for code identifiers in the subject (e.g. "Fix `foo()` crash").
 
 6. **Draft the body** (skip when the diff and subject already say everything):
    - Blank line between subject and body.
    - Hard-wrap at 72 chars. URLs, fully-quoted error strings, and Markdown reference-link definitions (`[label]: url`) pass through unwrapped — the linter leaves them alone.
    - Explain **what** changed and **why**, not **how** (the diff shows how).
    - Use Markdown: bullets for lists, backticks for `identifiers`, fenced blocks for non-trivial code/output.
+   - Include a blank line between list items if any is more than a few words.
    - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket.
    - Mention breaking changes, migration steps, deployment notes, perf impact when relevant.
    - **Don't** list tests added — tests are table stakes. **Don't** restate the diff line-by-line.
