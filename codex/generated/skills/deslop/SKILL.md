@@ -7,7 +7,7 @@ description: Remove AI-generated code slop and clean up code style
 
 # Remove AI code slop
 
-Check the diff against main and remove AI-generated slop introduced in the branch.
+Check the diff against main (or master) and remove AI-generated slop introduced in the branch.
 
 ## Focus Areas
 
@@ -28,3 +28,4 @@ Check the diff against main and remove AI-generated slop introduced in the branc
 - Keep behavior unchanged unless fixing a clear bug.
 - Prefer minimal, focused edits over broad rewrites.
 - Keep the final summary concise (1-3 sentences).
+- Avoid removing slop that wasn't introduced by specified branch or commit.
