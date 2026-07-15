@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+/**
+ * Converts a GitHub PR URL into a Slack-formatted PTAL message.
+ *
+ * Usage:
+ *   echo "https://github.com/WesVetter/widget-factory/pull/1234" | pr-to-slack
+ *   pbpaste | pr-to-slack | pbcopy
+ */
+
+import { execSync } from "node:child_process"
+
+const input = (await readStdin()).trim()
+
+const match = input.match(
+  /github\.com\/(?<owner>[^/]+)\/(?<repo>[^/]+)\/pull\/(?<number>\d+)/,
+)
+
+if (!match) {
+  console.error("Error: could not parse a GitHub PR URL from input.")
+  console.error("Expected format: https://github.com/<owner>/<repo>/pull/<number>")
+  process.exit(1)
+}
+
+const { owner, repo, number } = match.groups
+const prUrl = `https://github.com/${owner}/${repo}/pull/${number}`
+
+const title = execSync(`gh pr view ${prUrl} --json title --jq .title`, {
+  encoding: "utf-8",
+}).trim()
+
+console.log(`:ptal: [${repo}] [${title}](${prUrl})`)
+
+function readStdin() {
+  return new Promise((resolve) => {
+    let data = ""
+    process.stdin.setEncoding("utf-8")
+    process.stdin.on("data", (chunk) => (data += chunk))
+    process.stdin.on("end", () => resolve(data))
+  })
+}
