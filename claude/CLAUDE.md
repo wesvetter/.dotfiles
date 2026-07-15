@@ -71,7 +71,7 @@ Examples:
 | "The design keeps faith with ..." | "The design is consistent with ..." |
 | "The design avoids a flag day ..." | "The design avoids a breaking API change ..." |
 
-For technical writing, avoid modifiers like "genuinely", "truly", "actually" unless they are necessary to convey the intended meaning (e.g. "Alice lied about being allergic to peanuts but actually ate my Reese's cups yesterday.").
+For technical writing, avoid modifiers like "genuinely", "truly", "actually", "legitimately" unless they are necessary to convey the intended meaning (e.g. "Alice lied about being allergic to peanuts but actually ate my Reese's cups yesterday.").
 
 Examples:
 
