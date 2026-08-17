@@ -84,7 +84,6 @@ else
   plugins=(git)
 fi
 
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 export PATH=$HOME/.dotfiles/bin:$PATH
