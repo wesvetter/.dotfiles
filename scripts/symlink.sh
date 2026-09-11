@@ -42,5 +42,6 @@ if [ -d $HOME/.dotfiles/claude/skills ]; then
 fi
 
 $HOME/.dotfiles/scripts/install-codex-config.sh
+$HOME/.dotfiles/scripts/install-cursor-config.sh
 
 echo "done"
