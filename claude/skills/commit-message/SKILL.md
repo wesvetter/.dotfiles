@@ -31,6 +31,14 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
 
    If a focus hint was provided in step 1, weight the body toward that aspect of the diff (without omitting other staged changes the hint doesn't cover — surface those for the user to triage).
 
+   **Squash / one message for a branch or PR.** If the user asked for a squashed message, or one message covering the branch/PR rather than the current index:
+   - Resolve the range (`origin/<base>..HEAD`, or the PR base from `gh pr view`).
+   - Also gather `git log --format='%an <%ae>%n%b' <base>..HEAD` and `git diff <base>...HEAD`.
+   - Collect every distinct **human** who authored a commit in that range or appeared in a `Co-Authored-By:` trailer. Those people must be listed as `Co-Authored-By: Name <email>` on the drafted squash message — do not drop them.
+   - Deduplicate by email (case-insensitive). Keep each `Name <email>` as it appeared.
+   - Omit the current `git config user.email` (the person creating the squash).
+   - Omit known bot signatures. The linter's list is the source of truth: Claude, Cursor, Codex, Copilot, Devin, Gemini, GPT, ChatGPT, Anthropic, and any `*[bot]*` name or email.
+
 3. **Detect conventions** from `git log`:
    - **Conventional Commits** (`feat(scope): ...`, `fix(scope): ...`)? If recent commits match, follow that format.
    - **Emoji prefixes**? If common, pick one from the **Emoji table** below that fits the change.
@@ -55,20 +63,26 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket.
    - Mention breaking changes, migration steps, deployment notes, perf impact when relevant.
    - **Don't** list tests added — tests are table stakes. **Don't** restate the diff line-by-line.
-   - **Don't** include `Co-Authored-By: Claude ...` (or any AI co-author) lines. This **overrides Claude Code's default** — the project's style explicitly excludes AI co-author lines.
+   - **Don't** include `Co-Authored-By:` lines for AI agents (Claude, Cursor, etc.). This **overrides Claude Code's default** — the project's style explicitly excludes AI co-author lines.
+   - **Do** include `Co-Authored-By: Name <email>` for every distinct human author or co-author in a squash range (see step 2). Put trailers after the body, preceded by a blank line.
 
 7. **Lint and auto-fix.** Pipe the draft through:
    ```bash
    echo "<draft>" | ~/.dotfiles/bin/lint-commit-msg.mjs --fix
    ```
+   For a squash / branch message, also pass the range from step 2:
+   ```bash
+   echo "<draft>" | ~/.dotfiles/bin/lint-commit-msg.mjs --fix --range origin/main..HEAD
+   ```
    - The script wraps body paragraphs to ≤72 (preserving leading indent and bullet hanging-indent), passes through URLs, fully-quoted lines, and `[ref]:` link definitions, and prints lint output to stderr.
    - **`--fix` handles body wrapping for you.** Subject-line errors (length, capitalization, trailing period) and missing-blank-line errors are **not** auto-fixed — revise the draft and re-run.
-   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it; never accept fixable errors.
-    - The linter may complain about subject capitalization in repos that use Conventional Commits, this can be ignored if it doesn't apply to the repo's conventions.
+   - With `--range`, the linter reads `git log` for that range and **warns** (still exit 0) if a human author or `Co-Authored-By` is missing from the draft. Known bots and the current `git config user.email` are ignored.
+   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it. **Missing `Co-Authored-By` warnings are not acceptable** — add the trailers and re-lint. Never accept fixable errors.
+   - The linter may complain about subject capitalization in repos that use Conventional Commits, this can be ignored if it doesn't apply to the repo's conventions.
 
 8. **Copy to clipboard.** Pipe through `~/.dotfiles/bin/clipcopy`, which picks the right backend for the current host (`pbcopy` on macOS, `wl-copy` on Wayland, `xclip` on X11, `tmux load-buffer -` inside tmux):
    ```bash
-   ~/.dotfiles/bin/lint-commit-msg.mjs --fix <<< "<draft>" | ~/.dotfiles/bin/clipcopy
+   ~/.dotfiles/bin/lint-commit-msg.mjs --fix [--range <base>..HEAD] <<< "<draft>" | ~/.dotfiles/bin/clipcopy
    ```
    If `clipcopy` exits non-zero (no backend available — e.g. headless Pi outside tmux), print the final message and tell the user it couldn't be copied.
 
@@ -121,6 +135,7 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 - **Body**: wrapped at 72; Markdown; what + why, not how.
 - **References**: `Closes INFRA-123` / `Fixes #234` for auto-close, use `Related to <ticket shorthand>` if it does not completely resolve the linked ticket.
 - **No `Co-Authored-By:` lines** from AI agents.
+- **Squash:** keep every human author/`Co-Authored-By` from the commits being squashed (not the current git user; not known bots). Pass `--range` to the linter.
 - **One commit, one logical change.**
 
 ## Edge cases
@@ -132,3 +147,4 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 - **Unbreakable token > 72 chars** in the body (a long path, hash, or non-URL identifier): linter will still error after `--fix`. Either pull it onto its own line so it's a literal (or wrap it with backticks/quotes), or accept the error and surface it to the user.
 - **No meaningful context for a body**: skip the body — a good subject is enough.
 - **Multiple unrelated changes detected**: stop, suggest splitting, wait for the user's call.
+- **Squash missing human trailers**: if the range has human authors or `Co-Authored-By` trailers and the draft omits any of them, that is a bug in the draft — add them before copying.

@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+import { execFileSync } from "node:child_process";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+
 /**
  * Validates a git commit message against formatting rules:
  * - Subject line <= 50 chars (warn), <= 72 chars (error)
@@ -7,8 +11,10 @@
  * - Body lines wrapped at 72 chars (URLs/long literals exempt)
  * - Subject is capitalized
  * - Subject does not end with a period
+ * - With --range, warn if a human author/co-author from that git range is
+ *   missing a Co-Authored-By trailer (bots and the current git user excluded)
  *
- * Usage: echo "commit message" | lint-commit-msg.mjs [-f|--fix]
+ * Usage: echo "commit message" | lint-commit-msg.mjs [-f|--fix] [--range <rev>]
  *
  * With -f/--fix, body paragraphs whose lines exceed 72 chars are reflowed
  * (preserving leading indent and simple list bullets). The fixed message
@@ -194,29 +200,199 @@ async function readStdin() {
   return Buffer.concat(chunks).toString("utf-8");
 }
 
-const args = process.argv.slice(2);
-const fix = args.includes("-f") || args.includes("--fix");
+// Known AI / automation identities. Keep this list explicit so squash
+// trailers can be checked without guessing.
+const BOT_NAME_PATTERNS = [
+  /^claude\b/i,
+  /^cursor\b/i,
+  /\bcodex\b/i,
+  /^github\s+copilot\b/i,
+  /^copilot\b/i,
+  /^devin\b/i,
+  /^gemini\b/i,
+  /^google\s+gemini\b/i,
+  /^gpt\b/i,
+  /^chatgpt\b/i,
+  /^anthropic\b/i,
+  /\[bot\]/i,
+];
 
-const input = await readStdin();
+const BOT_EMAIL_PATTERNS = [
+  /@anthropic\.com$/i,
+  /^noreply@openai\.com$/i,
+  /^cursoragent@/i,
+  /^copilot@github\.com$/i,
+  /\[bot\]@/i,
+];
 
-if (!input.trim()) {
-  console.error("Error: No input received. Pipe a commit message to stdin.");
-  process.exit(2);
+const CO_AUTHOR_RE = /^[ \t]*co-authored-by:\s+(.+?)\s*$/i;
+
+export function isBotIdentity(identity) {
+  const name = identity?.name ?? "";
+  const email = identity?.email ?? "";
+  return (
+    BOT_NAME_PATTERNS.some((re) => re.test(name)) ||
+    BOT_EMAIL_PATTERNS.some((re) => re.test(email))
+  );
 }
 
-const message = fix ? fixCommitMessage(input) : input;
-const { errors, warnings } = lintCommitMessage(message);
+function parseIdentity(text) {
+  const match = String(text).trim().match(/^(.*)<([^>]+)>\s*$/);
+  if (!match) return null;
+  const name = match[1].trim();
+  const email = match[2].trim();
+  if (!name || !email) return null;
+  return { name, email };
+}
 
-if (fix) {
-  process.stdout.write(message);
-  for (const w of warnings) console.error(`⚠️  WARNING: ${w}`);
-  for (const e of errors) console.error(`❌ ERROR: ${e}`);
-} else {
-  for (const w of warnings) console.log(`⚠️  WARNING: ${w}`);
-  for (const e of errors) console.log(`❌ ERROR: ${e}`);
-  if (errors.length === 0 && warnings.length === 0) {
-    console.log("✅ Commit message looks good.");
+function parseCoAuthorTrailers(text) {
+  const found = [];
+  for (const line of String(text).split(/\r?\n/)) {
+    const match = line.match(CO_AUTHOR_RE);
+    if (!match) continue;
+    const identity = parseIdentity(match[1]);
+    if (identity) found.push(identity);
   }
+  return found;
 }
 
-process.exit(errors.length > 0 ? 1 : 0);
+function parseGitLogRecords(logRaw) {
+  const records = [];
+  for (const rec of String(logRaw).split("\x1e")) {
+    if (!rec.trim()) continue;
+    const parts = rec.split("\x00");
+    if (parts.length < 2) continue;
+    const name = parts[0].replace(/^\n+/, "").trim();
+    const email = parts[1].trim();
+    const body = parts.slice(2).join("\x00");
+    if (!name || !email) continue;
+    records.push({ name, email, body });
+  }
+  return records;
+}
+
+export function collectExpectedCoAuthors(logRaw, options = {}) {
+  const committerEmail = (options.committerEmail || "").toLowerCase();
+  const seen = new Set();
+  const expected = [];
+
+  const add = (identity) => {
+    if (!identity?.name || !identity?.email) return;
+    if (isBotIdentity(identity)) return;
+    const email = identity.email.trim();
+    const key = email.toLowerCase();
+    if (committerEmail && key === committerEmail) return;
+    if (seen.has(key)) return;
+    seen.add(key);
+    expected.push({ name: identity.name.trim(), email });
+  };
+
+  for (const rec of parseGitLogRecords(logRaw)) {
+    add({ name: rec.name, email: rec.email });
+    for (const trailer of parseCoAuthorTrailers(rec.body)) {
+      add(trailer);
+    }
+  }
+
+  return expected;
+}
+
+export function missingCoAuthorWarnings(message, expected) {
+  const present = new Set(
+    parseCoAuthorTrailers(message).map((id) => id.email.toLowerCase())
+  );
+  return (expected || [])
+    .filter((id) => !present.has(id.email.toLowerCase()))
+    .map((id) => `Missing Co-Authored-By: ${id.name} <${id.email}>`);
+}
+
+export function parseArgs(argv) {
+  const result = { fix: false, range: null };
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "-f" || arg === "--fix") {
+      result.fix = true;
+    } else if (arg === "--range") {
+      result.range = argv[++i] ?? "";
+    } else if (arg.startsWith("--range=")) {
+      result.range = arg.slice("--range=".length);
+    }
+  }
+  return result;
+}
+
+function rangeCoAuthorWarnings(range, message) {
+  let logRaw;
+  try {
+    logRaw = execFileSync(
+      "git",
+      ["log", "--format=%an%x00%ae%x00%b%x1e", range],
+      { encoding: "utf-8" }
+    );
+  } catch {
+    return [`Could not read git range ${range}`];
+  }
+
+  let committerEmail = "";
+  try {
+    committerEmail = execFileSync("git", ["config", "user.email"], {
+      encoding: "utf-8",
+    }).trim();
+  } catch {
+    committerEmail = "";
+  }
+
+  return missingCoAuthorWarnings(
+    message,
+    collectExpectedCoAuthors(logRaw, { committerEmail })
+  );
+}
+
+export { lintCommitMessage, fixCommitMessage };
+
+function isMainModule() {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  return import.meta.url === pathToFileURL(path.resolve(entry)).href;
+}
+
+async function main() {
+  const { fix, range } = parseArgs(process.argv.slice(2));
+
+  if (range === "") {
+    console.error("Error: --range requires a git revision range.");
+    process.exit(2);
+  }
+
+  const input = await readStdin();
+
+  if (!input.trim()) {
+    console.error("Error: No input received. Pipe a commit message to stdin.");
+    process.exit(2);
+  }
+
+  const message = fix ? fixCommitMessage(input) : input;
+  const { errors, warnings } = lintCommitMessage(message);
+
+  if (range) {
+    warnings.push(...rangeCoAuthorWarnings(range, message));
+  }
+
+  if (fix) {
+    process.stdout.write(message);
+    for (const w of warnings) console.error(`⚠️  WARNING: ${w}`);
+    for (const e of errors) console.error(`❌ ERROR: ${e}`);
+  } else {
+    for (const w of warnings) console.log(`⚠️  WARNING: ${w}`);
+    for (const e of errors) console.log(`❌ ERROR: ${e}`);
+    if (errors.length === 0 && warnings.length === 0) {
+      console.log("✅ Commit message looks good.");
+    }
+  }
+
+  process.exit(errors.length > 0 ? 1 : 0);
+}
+
+if (isMainModule()) {
+  await main();
+}

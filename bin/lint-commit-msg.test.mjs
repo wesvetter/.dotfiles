@@ -2,17 +2,25 @@
 
 import { test, describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import {
+  isBotIdentity,
+  collectExpectedCoAuthors,
+  missingCoAuthorWarnings,
+} from "./lint-commit-msg.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SCRIPT = path.join(__dirname, "lint-commit-msg.mjs");
 
-function run(input, args = []) {
+function run(input, args = [], options = {}) {
   const result = spawnSync("node", [SCRIPT, ...args], {
     input,
     encoding: "utf-8",
+    cwd: options.cwd,
   });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
 }
@@ -166,6 +174,159 @@ test("without --fix, original behavior preserved (errors on stdout, exit 1)", ()
   const { status, stdout } = run(input);
   assert.equal(status, 1);
   assert.match(stdout, /Body line/);
+});
+
+describe("squash co-authors", () => {
+  describe("isBotIdentity", () => {
+    const bots = [
+      ["Claude", "noreply@anthropic.com"],
+      ["Claude Sonnet 4.6", "noreply@anthropic.com"],
+      ["Claude Code", "claude@anthropic.com"],
+      ["Cursor", "cursoragent@cursor.com"],
+      ["Cursor Agent", "cursoragent@cursor.com"],
+      ["Codex", "noreply@openai.com"],
+      ["OpenAI Codex", "noreply@openai.com"],
+      ["GitHub Copilot", "copilot@github.com"],
+      ["Copilot", "copilot@github.com"],
+      ["Devin", "devin@cognition-ai.com"],
+      ["Devin AI", "devin@cognition-ai.com"],
+      ["Gemini", "gemini@google.com"],
+      ["Google Gemini", "gemini@google.com"],
+      ["GPT-5", "gpt@openai.com"],
+      ["ChatGPT", "noreply@openai.com"],
+      ["Anthropic", "noreply@anthropic.com"],
+      ["dependabot[bot]", "dependabot[bot]@users.noreply.github.com"],
+    ];
+
+    for (const [name, email] of bots) {
+      it(`treats ${name} as a bot`, () => {
+        assert.equal(isBotIdentity({ name, email }), true, `${name} <${email}>`);
+      });
+    }
+
+    const humans = [
+      ["Wes Vetter", "wes@example.com"],
+      ["Alice Smith", "alice@seenhealth.com"],
+      ["Bob Jones", "bob@users.noreply.github.com"],
+    ];
+
+    for (const [name, email] of humans) {
+      it(`treats ${name} as a human`, () => {
+        assert.equal(isBotIdentity({ name, email }), false, `${name} <${email}>`);
+      });
+    }
+  });
+
+  describe("collectExpectedCoAuthors", () => {
+    it("keeps human authors and trailers, drops bots and the committer", () => {
+      const log = [
+        "Wes Vetter\0wes@example.com\0Fix the login form\x1e",
+        "Alice Smith\0alice@example.com\0Add validation\x1e",
+        "Claude\0noreply@anthropic.com\0Co-authored-by: Bob Jones <bob@example.com>\nCo-authored-by: Codex <noreply@openai.com>\x1e",
+      ].join("");
+
+      assert.deepEqual(
+        collectExpectedCoAuthors(log, { committerEmail: "wes@example.com" }),
+        [
+          { name: "Alice Smith", email: "alice@example.com" },
+          { name: "Bob Jones", email: "bob@example.com" },
+        ]
+      );
+    });
+
+    it("deduplicates by email, keeping the first spelling", () => {
+      const log = [
+        "Alice Smith\0alice@example.com\0first\x1e",
+        "A. Smith\0Alice@example.com\0second\x1e",
+      ].join("");
+
+      assert.deepEqual(collectExpectedCoAuthors(log), [
+        { name: "Alice Smith", email: "alice@example.com" },
+      ]);
+    });
+  });
+
+  describe("missingCoAuthorWarnings", () => {
+    it("warns for each human missing from the draft", () => {
+      const warnings = missingCoAuthorWarnings(
+        "Add login\n\nWhy the form needed validation.\n",
+        [
+          { name: "Alice Smith", email: "alice@example.com" },
+          { name: "Bob Jones", email: "bob@example.com" },
+        ]
+      );
+      assert.deepEqual(warnings, [
+        "Missing Co-Authored-By: Alice Smith <alice@example.com>",
+        "Missing Co-Authored-By: Bob Jones <bob@example.com>",
+      ]);
+    });
+
+    it("accepts existing trailers regardless of header case", () => {
+      const warnings = missingCoAuthorWarnings(
+        [
+          "Add login",
+          "",
+          "Why the form needed validation.",
+          "",
+          "Co-authored-by: Alice Smith <alice@example.com>",
+        ].join("\n"),
+        [{ name: "Alice Smith", email: "alice@example.com" }]
+      );
+      assert.deepEqual(warnings, []);
+    });
+  });
+
+  describe("--range", () => {
+    it("warns on stdout and still exits 0 when a human is missing", () => {
+      const dir = mkdtempSync(path.join(tmpdir(), "lint-commit-range-"));
+      const env = {
+        ...process.env,
+        GIT_AUTHOR_NAME: "Wes Vetter",
+        GIT_AUTHOR_EMAIL: "wes@example.com",
+        GIT_COMMITTER_NAME: "Wes Vetter",
+        GIT_COMMITTER_EMAIL: "wes@example.com",
+      };
+      try {
+        execFileSync("git", ["init", "-b", "main"], { cwd: dir, env });
+        execFileSync("git", ["config", "user.name", "Wes Vetter"], { cwd: dir, env });
+        execFileSync("git", ["config", "user.email", "wes@example.com"], {
+          cwd: dir,
+          env,
+        });
+        writeFileSync(path.join(dir, "a.txt"), "a\n");
+        execFileSync("git", ["add", "a.txt"], { cwd: dir, env });
+        execFileSync("git", ["commit", "-m", "Base"], { cwd: dir, env });
+        execFileSync("git", ["tag", "base"], { cwd: dir, env });
+
+        writeFileSync(path.join(dir, "b.txt"), "b\n");
+        execFileSync("git", ["add", "b.txt"], { cwd: dir, env });
+        execFileSync(
+          "git",
+          ["commit", "-m", "Add validation"],
+          {
+            cwd: dir,
+            env: {
+              ...env,
+              GIT_AUTHOR_NAME: "Alice Smith",
+              GIT_AUTHOR_EMAIL: "alice@example.com",
+              GIT_COMMITTER_NAME: "Alice Smith",
+              GIT_COMMITTER_EMAIL: "alice@example.com",
+            },
+          }
+        );
+
+        const input = "Add login\n\nWhy the form needed validation.\n";
+        const { status, stdout } = run(input, ["--range", "base..HEAD"], {
+          cwd: dir,
+        });
+        assert.equal(status, 0, stdout);
+        assert.match(stdout, /Missing Co-Authored-By: Alice Smith <alice@example.com>/);
+        assert.doesNotMatch(stdout, /Wes Vetter/);
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    });
+  });
 });
 
 describe("Conventional Commit prefixes", () => {
