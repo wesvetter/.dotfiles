@@ -38,6 +38,7 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Deduplicate by email (case-insensitive). Keep each `Name <email>` as it appeared.
    - Omit the current `git config user.email` (the person creating the squash).
    - Omit known bot signatures. The linter's list is the source of truth: Claude, Cursor, Codex, Copilot, Devin, Gemini, GPT, ChatGPT, Anthropic, and any `*[bot]*` name or email.
+   - Don't blindly re-use the PR title as the subject line, as the shape of the change may have changed during the course of review. Or there may simply be a better way of writing the subject line.
 
 3. **Detect conventions** from `git log`:
    - **Conventional Commits** (`feat(scope): ...`, `fix(scope): ...`)? If recent commits match, follow that format.
