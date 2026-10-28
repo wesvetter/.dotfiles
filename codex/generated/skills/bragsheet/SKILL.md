@@ -44,45 +44,44 @@ whether to replace it or pick the prior week — don't silently write a duplicat
 
 Fire all of these in one batch; they're independent.
 
-**Code — `collect-github.sh`.** Graphite PRs *are* GitHub PRs, so `gh` is the
-cross-repo source of truth (see [Why not the Graphite API](#why-not-the-graphite-api)):
+**Code — `collect-github.sh`.** Graphite PRs *are* GitHub PRs, so `gh` is the cross-repo source of truth (see [Why not the Graphite API](#why-not-the-graphite-api)):
 
 ```bash
 ~/.claude/skills/bragsheet/collect-github.sh <SINCE> <UNTIL>
 ```
 
-Prints four JSON arrays under `## MERGED`, `## OPEN`, `## CLOSED_UNMERGED`,
-`## REVIEWED`. Errors are not swallowed — an empty array means a quiet week,
-not a broken query. For a PR whose impact isn't obvious from the title, read the
-body and discussion: `gh pr view <n> --repo <owner/repo> --json title,body,comments`.
+Prints four JSON arrays under `## MERGED`, `## OPEN`, `## CLOSED_UNMERGED`, `## REVIEWED`. Errors are not swallowed — an empty array means a quiet week, not a broken query.
 
-Add Graphite stack context only when a PR was part of a stack — inside a
-Graphite repo, `gt log --stack` shows it. Skip otherwise.
+`## MERGED` includes `body` and `release`, so do not open each PR. `body` is the PR body with HTML comments removed, cut at 1,500 characters. `release` is the `seen-ehr` tag whose history contains that merge commit, or null. The tag means the commit is in that release. It does not mean a backfill, flag flip, or script ran when the tag was published. Confirm production runs from Slack or the ticket. Call `gh pr view` only when you need comments or the rest of a truncated body.
 
-**Slack.** The single richest source is Wes's own daily standup posts in
-`#team-tech-only` — they already state yesterday/today in his words:
+Add Graphite stack context only when a PR was part of a stack — inside a Graphite repo, `gt log --stack` shows it. Skip otherwise.
 
-- `mcp__eng__slack__slack_search_public_and_private` with
-  `query: "from:<@U0BCEQF37FV> in:#team-tech-only after:<SINCE-1d>"`, `sort: "timestamp"`
-- Then a broader sweep for decisions and unblocking:
-  `query: "from:<@U0BCEQF37FV> after:<SINCE-1d>"`, `sort: "timestamp"`, `limit: 20`
-  (paginate with the returned cursor if the week was busy)
+**Slack.** One search covers standups and every other message Wes sent. A second search repeats the same posts.
 
-Slack `after:` is exclusive, so pass the day *before* SINCE. Follow threads worth
-quoting with `slack_read_thread`. Weight messages where Wes made a call,
-resolved a disagreement, or unblocked someone — skip logistics ("I'm in the
-zoom", "running late").
+`slack_search_public_and_private` in the `tech` namespace:
 
-**Notion.** Specs, proposals, and design docs are where the thinking lives:
+- `filters`: `from:<@U0BCEQF37FV> after:<day before SINCE> before:<day after UNTIL>`
+- `keywords`: `[]`
+- `natural_language_query`: `""`
+- `sort`: `timestamp`, `sort_dir`: `asc`
+- `limit`: `20`
+- `include_context`: false
+- `response_format`: `detailed`
 
-- `mcp__eng__notion__notion-list-recent-pages` (limit ~25) for what he touched
-- `mcp__eng__notion__notion-search` scoped to the week, e.g.
-  `filters: {created_date_range: {start_date: "<SINCE>"}}`, seeded with the
-  project names surfaced by the PRs and Slack sweep
+`after:` and `before:` are exclusive. Paginate with the returned cursor until the result says there are no more pages. Use `detailed`: `concise` drops permalinks, and the bragsheet copies permalinks verbatim from the result.
 
-The `created_by_user_ids` filter is unreliable on the AI-search backend — it
-returns other people's pages too. Confirm authorship with `notion-fetch` before
-claiming a doc as Wes's, or describe his contribution rather than sole authorship.
+Read a thread with `slack_read_thread` only when the hit is a standup or a decision and the reply count shows the parent is not the whole story. Skip logistics ("I'm in the zoom", "running late", lunch, birthdays). Weight messages where Wes made a call, resolved a disagreement, or unblocked someone.
+
+**Notion.** Ticket status lives on Tech Issues and Projects. Do not call `notion-list-recent-pages`. It lists pages Wes viewed, including older tickets. Do not `notion-search` and then fetch every hit.
+
+Fetch each data source schema once, then query rows:
+
+- Tech Issues: `collection://278017d8-7947-80dd-95ed-000b2e9e51ca`
+- Projects: `collection://256017d8-7947-8099-9726-000b076df019`
+
+`notion-fetch` on the `collection://` URL returns the schema and no pages. Then `notion-query-data-sources` in `rows` mode, with `mode`, `data_source_url`, `filter`, and `limit` nested under `data`. Filter `Owner` with `person_contains` and value `{type: "relative", value: "me"}`, and the last-edited date property inside SINCE..UNTIL. Use the date property name from the schema (`Updated` as of 2026-10). `limit` 100. Keep the ID, title, Status, and URL.
+
+`notion-search`'s `created_by_user_ids` filter returns other people's pages. `edited_by_user_ids` works on this workspace and still returns titles only, with no status. Prefer the row query. `Owner` on the row is the authorship check. `notion-fetch` a page only when the outcome is in the body (a project writeup or a spec) and the row is not enough. Fetching every ticket from the query is the slow path.
 
 ### 3. Synthesize
 
