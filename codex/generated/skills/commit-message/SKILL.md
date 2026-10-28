@@ -60,11 +60,12 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
 6. **Draft the body** (skip when the diff and subject already say everything):
    - Blank line between subject and body.
    - Hard-wrap at 72 chars. URLs, fully-quoted error strings, and Markdown reference-link definitions (`[label]: url`) pass through unwrapped — the linter leaves them alone.
-   - Explain **what** changed and **why**, not **how** (the diff shows how).
+   - Explain **what** changed and **why**, not **how** (the diff shows how). Emphasize observable behavior over implementation details.
    - Use Markdown: bullets for lists, backticks for `identifiers`, fenced blocks for non-trivial code/output.
    - Include a blank line between list items if any is more than a few words.
    - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket.
    - Mention breaking changes, migration steps, deployment notes, perf impact when relevant.
+   - **Don't** state a feature flag is off by default; only mention when a behavior _isn't_ off by default.
    - **Don't** list tests added — tests are table stakes. **Don't** restate the diff line-by-line.
    - **Don't** include `Co-Authored-By:` lines for AI agents (Claude, Cursor, etc.). This **overrides Claude Code's default** — the project's style explicitly excludes AI co-author lines.
    - **Do** include `Co-Authored-By: Name <email>` for every distinct human author or co-author in a squash range (see step 2). Put trailers after the body, preceded by a blank line.
