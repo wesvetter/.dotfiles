@@ -12,9 +12,10 @@ import { pathToFileURL } from "node:url";
  * - Subject is capitalized
  * - Subject does not end with a period
  * - With --range, warn if a human author/co-author from that git range is
- *   missing a Co-Authored-By trailer (bots and the current git user excluded)
+ *   missing a Co-Authored-By trailer (bots and the --pr-author email excluded)
  *
  * Usage: echo "commit message" | lint-commit-msg.mjs [-f|--fix] [--range <rev>]
+ *          [--pr-author <email>]
  *
  * With -f/--fix, body paragraphs whose lines exceed 72 chars are reflowed
  * (preserving leading indent and simple list bullets). The fixed message
@@ -272,7 +273,7 @@ function parseGitLogRecords(logRaw) {
 }
 
 export function collectExpectedCoAuthors(logRaw, options = {}) {
-  const committerEmail = (options.committerEmail || "").toLowerCase();
+  const prAuthorEmail = (options.prAuthorEmail || "").trim().toLowerCase();
   const seen = new Set();
   const expected = [];
 
@@ -281,7 +282,7 @@ export function collectExpectedCoAuthors(logRaw, options = {}) {
     if (isBotIdentity(identity)) return;
     const email = identity.email.trim();
     const key = email.toLowerCase();
-    if (committerEmail && key === committerEmail) return;
+    if (prAuthorEmail && key === prAuthorEmail) return;
     if (seen.has(key)) return;
     seen.add(key);
     expected.push({ name: identity.name.trim(), email });
@@ -307,7 +308,7 @@ export function missingCoAuthorWarnings(message, expected) {
 }
 
 export function parseArgs(argv) {
-  const result = { fix: false, range: null };
+  const result = { fix: false, range: null, prAuthor: null };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === "-f" || arg === "--fix") {
@@ -316,12 +317,16 @@ export function parseArgs(argv) {
       result.range = argv[++i] ?? "";
     } else if (arg.startsWith("--range=")) {
       result.range = arg.slice("--range=".length);
+    } else if (arg === "--pr-author") {
+      result.prAuthor = argv[++i] ?? "";
+    } else if (arg.startsWith("--pr-author=")) {
+      result.prAuthor = arg.slice("--pr-author=".length);
     }
   }
   return result;
 }
 
-function rangeCoAuthorWarnings(range, message) {
+function rangeCoAuthorWarnings(range, message, prAuthorEmail) {
   let logRaw;
   try {
     logRaw = execFileSync(
@@ -333,18 +338,9 @@ function rangeCoAuthorWarnings(range, message) {
     return [`Could not read git range ${range}`];
   }
 
-  let committerEmail = "";
-  try {
-    committerEmail = execFileSync("git", ["config", "user.email"], {
-      encoding: "utf-8",
-    }).trim();
-  } catch {
-    committerEmail = "";
-  }
-
   return missingCoAuthorWarnings(
     message,
-    collectExpectedCoAuthors(logRaw, { committerEmail })
+    collectExpectedCoAuthors(logRaw, { prAuthorEmail })
   );
 }
 
@@ -357,10 +353,15 @@ function isMainModule() {
 }
 
 async function main() {
-  const { fix, range } = parseArgs(process.argv.slice(2));
+  const { fix, range, prAuthor } = parseArgs(process.argv.slice(2));
 
   if (range === "") {
     console.error("Error: --range requires a git revision range.");
+    process.exit(2);
+  }
+
+  if (prAuthor === "") {
+    console.error("Error: --pr-author requires an email address.");
     process.exit(2);
   }
 
@@ -375,7 +376,7 @@ async function main() {
   const { errors, warnings } = lintCommitMessage(message);
 
   if (range) {
-    warnings.push(...rangeCoAuthorWarnings(range, message));
+    warnings.push(...rangeCoAuthorWarnings(range, message, prAuthor));
   }
 
   if (fix) {

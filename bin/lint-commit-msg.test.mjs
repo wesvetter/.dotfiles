@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { test, describe, it } from "node:test";
+import { test, describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -218,20 +218,28 @@ describe("squash co-authors", () => {
   });
 
   describe("collectExpectedCoAuthors", () => {
-    it("keeps human authors and trailers, drops bots and the committer", () => {
-      const log = [
-        "Wes Vetter\0wes@example.com\0Fix the login form\x1e",
-        "Alice Smith\0alice@example.com\0Add validation\x1e",
-        "Claude\0noreply@anthropic.com\0Co-authored-by: Bob Jones <bob@example.com>\nCo-authored-by: Codex <noreply@openai.com>\x1e",
-      ].join("");
+    const log = [
+      "Wes Vetter\0wes@example.com\0Fix the login form\x1e",
+      "Alice Smith\0alice@example.com\0Add validation\x1e",
+      "Claude\0noreply@anthropic.com\0Co-authored-by: Bob Jones <bob@example.com>\nCo-authored-by: Codex <noreply@openai.com>\x1e",
+    ].join("");
 
+    it("keeps human authors and trailers, drops bots and the PR author", () => {
       assert.deepEqual(
-        collectExpectedCoAuthors(log, { committerEmail: "wes@example.com" }),
+        collectExpectedCoAuthors(log, { prAuthorEmail: "Wes@example.com" }),
         [
           { name: "Alice Smith", email: "alice@example.com" },
           { name: "Bob Jones", email: "bob@example.com" },
         ]
       );
+    });
+
+    it("keeps every human when no PR author is given", () => {
+      assert.deepEqual(collectExpectedCoAuthors(log), [
+        { name: "Wes Vetter", email: "wes@example.com" },
+        { name: "Alice Smith", email: "alice@example.com" },
+        { name: "Bob Jones", email: "bob@example.com" },
+      ]);
     });
 
     it("deduplicates by email, keeping the first spelling", () => {
@@ -277,54 +285,79 @@ describe("squash co-authors", () => {
   });
 
   describe("--range", () => {
+    const input = "Add login\n\nWhy the form needed validation.\n";
+    let dir;
+
+    const identity = (name, email) => ({
+      GIT_AUTHOR_NAME: name,
+      GIT_AUTHOR_EMAIL: email,
+      GIT_COMMITTER_NAME: name,
+      GIT_COMMITTER_EMAIL: email,
+    });
+
+    const commit = (file, subject, author) => {
+      const env = { ...process.env, ...author };
+      writeFileSync(path.join(dir, file), `${file}\n`);
+      execFileSync("git", ["add", file], { cwd: dir, env });
+      execFileSync("git", ["commit", "-m", subject], { cwd: dir, env });
+    };
+
+    before(() => {
+      dir = mkdtempSync(path.join(tmpdir(), "lint-commit-range-"));
+      const wes = identity("Wes Vetter", "wes@example.com");
+      const alice = identity("Alice Smith", "alice@example.com");
+      execFileSync("git", ["init", "-b", "main"], { cwd: dir });
+      execFileSync("git", ["config", "user.name", "Wes Vetter"], { cwd: dir });
+      execFileSync("git", ["config", "user.email", "wes@example.com"], {
+        cwd: dir,
+      });
+      commit("a.txt", "Base", wes);
+      execFileSync("git", ["tag", "base"], { cwd: dir });
+      commit("b.txt", "Add validation", alice);
+      commit("c.txt", "Address review feedback", wes);
+    });
+
+    after(() => {
+      rmSync(dir, { recursive: true, force: true });
+    });
+
     it("warns on stdout and still exits 0 when a human is missing", () => {
-      const dir = mkdtempSync(path.join(tmpdir(), "lint-commit-range-"));
-      const env = {
-        ...process.env,
-        GIT_AUTHOR_NAME: "Wes Vetter",
-        GIT_AUTHOR_EMAIL: "wes@example.com",
-        GIT_COMMITTER_NAME: "Wes Vetter",
-        GIT_COMMITTER_EMAIL: "wes@example.com",
-      };
-      try {
-        execFileSync("git", ["init", "-b", "main"], { cwd: dir, env });
-        execFileSync("git", ["config", "user.name", "Wes Vetter"], { cwd: dir, env });
-        execFileSync("git", ["config", "user.email", "wes@example.com"], {
-          cwd: dir,
-          env,
-        });
-        writeFileSync(path.join(dir, "a.txt"), "a\n");
-        execFileSync("git", ["add", "a.txt"], { cwd: dir, env });
-        execFileSync("git", ["commit", "-m", "Base"], { cwd: dir, env });
-        execFileSync("git", ["tag", "base"], { cwd: dir, env });
+      const { status, stdout } = run(input, ["--range", "base..HEAD"], {
+        cwd: dir,
+      });
+      assert.equal(status, 0, stdout);
+      assert.match(stdout, /Missing Co-Authored-By: Alice Smith <alice@example.com>/);
+    });
 
-        writeFileSync(path.join(dir, "b.txt"), "b\n");
-        execFileSync("git", ["add", "b.txt"], { cwd: dir, env });
-        execFileSync(
-          "git",
-          ["commit", "-m", "Add validation"],
-          {
-            cwd: dir,
-            env: {
-              ...env,
-              GIT_AUTHOR_NAME: "Alice Smith",
-              GIT_AUTHOR_EMAIL: "alice@example.com",
-              GIT_COMMITTER_NAME: "Alice Smith",
-              GIT_COMMITTER_EMAIL: "alice@example.com",
-            },
-          }
+    it("expects the current git user when no PR author is given", () => {
+      const { stdout } = run(input, ["--range", "base..HEAD"], { cwd: dir });
+      assert.match(stdout, /Missing Co-Authored-By: Wes Vetter <wes@example.com>/);
+    });
+
+    for (const args of [
+      ["--pr-author", "alice@example.com"],
+      ["--pr-author=alice@example.com"],
+    ]) {
+      it(`does not expect the PR author with ${args.join(" ")}`, () => {
+        const { status, stdout } = run(
+          input,
+          ["--range", "base..HEAD", ...args],
+          { cwd: dir }
         );
-
-        const input = "Add login\n\nWhy the form needed validation.\n";
-        const { status, stdout } = run(input, ["--range", "base..HEAD"], {
-          cwd: dir,
-        });
         assert.equal(status, 0, stdout);
-        assert.match(stdout, /Missing Co-Authored-By: Alice Smith <alice@example.com>/);
-        assert.doesNotMatch(stdout, /Wes Vetter/);
-      } finally {
-        rmSync(dir, { recursive: true, force: true });
-      }
+        assert.doesNotMatch(stdout, /Alice Smith/);
+        assert.match(stdout, /Missing Co-Authored-By: Wes Vetter <wes@example.com>/);
+      });
+    }
+
+    it("exits 2 when --pr-author has no value", () => {
+      const { status, stderr } = run(input, [
+        "--range",
+        "base..HEAD",
+        "--pr-author",
+      ], { cwd: dir });
+      assert.equal(status, 2);
+      assert.match(stderr, /--pr-author requires an email/);
     });
   });
 });

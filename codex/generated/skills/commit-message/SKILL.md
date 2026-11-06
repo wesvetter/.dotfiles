@@ -38,14 +38,16 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Also gather `git log --format='%an <%ae>%n%b' <base>..HEAD` and `git diff <base>...HEAD`.
    - Collect every distinct **human** who authored a commit in that range or appeared in a `Co-Authored-By:` trailer. Those people must be listed as `Co-Authored-By: Name <email>` on the drafted squash message — do not drop them.
    - Deduplicate by email (case-insensitive). Keep each `Name <email>` as it appeared.
-   - Omit the current `git config user.email` (the person creating the squash).
+   - When creating a squashed commit for a PR, omit the PR author as a co-author
+   - When adding a human co-author, prefer the email that the author regularly commits under (this may require additional inspection)
    - Omit known bot signatures. The linter's list is the source of truth: Claude, Cursor, Codex, Copilot, Devin, Gemini, GPT, ChatGPT, Anthropic, and any `*[bot]*` name or email.
    - Don't blindly re-use the PR title as the subject line, as the shape of the change may have changed during the course of review. Or there may simply be a better way of writing the subject line.
 
 3. **Detect conventions** from `git log`:
    - **Conventional Commits** (`feat(scope): ...`, `fix(scope): ...`)? If recent commits match, follow that format.
+       - Avoid misleading scopes (e.g. `feat(react)` for a UI change that doesn't specifically upgrade React capabilities or dependencies)
    - **Emoji prefixes**? If common, pick one from the **Emoji table** below that fits the change.
-   - If both Conventional and emoji are present, do whatever the most recent commits do.
+   - If the repo uses conventional commits AND the author typically squashes commits on merge, use emoji commits for the topic branch and conventional commits for the squashed commit.
 
 4. **Sanity-check atomicity.** If the diff covers multiple unrelated changes (e.g. dep bump + bug fix + reformat), tell the user before drafting and suggest splitting. Only proceed with one message if they confirm.
 
@@ -63,7 +65,7 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Explain **what** changed and **why**, not **how** (the diff shows how). Emphasize observable behavior over implementation details.
    - Use Markdown: bullets for lists, backticks for `identifiers`, fenced blocks for non-trivial code/output.
    - Include a blank line between list items if any is more than a few words.
-   - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket.
+   - Reference issues: `Closes INFRA-123`, `Fixes #456`, `Resolves SC-789` — these auto-close the ticket. Never include a bare ticket number (bad: `#12345`, good: `Relates to #12345`).
    - Mention breaking changes, migration steps, deployment notes, perf impact when relevant.
    - **Don't** state a feature flag is off by default; only mention when a behavior _isn't_ off by default.
    - **Don't** list tests added — tests are table stakes. **Don't** restate the diff line-by-line.
@@ -76,17 +78,18 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    ```
    For a squash / branch message, also pass the range from step 2:
    ```bash
-   echo "<draft>" | ~/.dotfiles/bin/lint-commit-msg.mjs --fix --range origin/main..HEAD
+   echo "<draft>" | ~/.dotfiles/bin/lint-commit-msg.mjs --fix --range origin/main..HEAD --pr-author <email>
    ```
+   - For a PR, `--pr-author` is the email the PR author commits under in that range (`gh pr view --json author` gives the login; match it to their commits). For a branch with no PR, pass your own `git config user.email`.
    - The script wraps body paragraphs to ≤72 (preserving leading indent and bullet hanging-indent), passes through URLs, fully-quoted lines, and `[ref]:` link definitions, and prints lint output to stderr.
    - **`--fix` handles body wrapping for you.** Subject-line errors (length, capitalization, trailing period) and missing-blank-line errors are **not** auto-fixed — revise the draft and re-run.
-   - With `--range`, the linter reads `git log` for that range and **warns** (still exit 0) if a human author or `Co-Authored-By` is missing from the draft. Known bots and the current `git config user.email` are ignored.
+   - With `--range`, the linter reads `git log` for that range and **warns** (still exit 0) if a human author or `Co-Authored-By` is missing from the draft. Known bots and the `--pr-author` email are ignored; without `--pr-author`, every human in the range is expected.
    - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it. **Missing `Co-Authored-By` warnings are not acceptable** — add the trailers and re-lint. Never accept fixable errors.
    - The linter may complain about subject capitalization in repos that use Conventional Commits, this can be ignored if it doesn't apply to the repo's conventions.
 
 8. **Copy to clipboard.** Pipe through `~/.dotfiles/bin/clipcopy`, which picks the right backend for the current host (`pbcopy` on macOS, `wl-copy` on Wayland, `xclip` on X11, `tmux load-buffer -` inside tmux):
    ```bash
-   ~/.dotfiles/bin/lint-commit-msg.mjs --fix [--range <base>..HEAD] <<< "<draft>" | ~/.dotfiles/bin/clipcopy
+   ~/.dotfiles/bin/lint-commit-msg.mjs --fix [--range <base>..HEAD --pr-author <email>] <<< "<draft>" | ~/.dotfiles/bin/clipcopy
    ```
    If `clipcopy` exits non-zero (no backend available — e.g. headless Pi outside tmux), print the final message and tell the user it couldn't be copied.
 
@@ -139,7 +142,7 @@ Pick the one that best matches the _primary_ effect of the commit; if no emoji c
 - **Body**: wrapped at 72; Markdown; what + why, not how.
 - **References**: `Closes INFRA-123` / `Fixes #234` for auto-close, use `Related to <ticket shorthand>` if it does not completely resolve the linked ticket.
 - **No `Co-Authored-By:` lines** from AI agents.
-- **Squash:** keep every human author/`Co-Authored-By` from the commits being squashed (not the current git user; not known bots). Pass `--range` to the linter.
+- **Squash:** keep every human author/`Co-Authored-By` from the commits being squashed (not the PR author; not known bots). Pass `--range` and `--pr-author` to the linter.
 - **One commit, one logical change.**
 
 ## Edge cases
