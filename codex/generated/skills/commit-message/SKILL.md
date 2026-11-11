@@ -1,5 +1,5 @@
 ---
-name: commit-message
+name: cm
 description: Draft a high quality git commit message. Accepts an optional argument naming the target repo (path or name) or a focus hint.
 ---
 
