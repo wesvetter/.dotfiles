@@ -35,13 +35,28 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    - Resolve the range (`origin/<base>..HEAD`, or the PR base from `gh pr view`).
    - Also gather `git log --format='%an <%ae>%n%b' <base>..HEAD` and `git diff <base>...HEAD`.
    - Collect every distinct **human** who authored a commit in that range or appeared in a `Co-Authored-By:` trailer. Those people must be listed as `Co-Authored-By: Name <email>` on the drafted squash message — do not drop them.
-   - Deduplicate by email (case-insensitive). Keep each `Name <email>` as it appeared.
-   - When creating a squashed commit for a PR, omit the PR author as a co-author
-   - When adding a human co-author, prefer the email that the author regularly commits under (this may require additional inspection)
+   - Identify people by GitHub login, not by email. One person often appears under several emails (e.g. a work email in a trailer that Cursor adds for a cloud agent, and a personal email in their own commits). For a PR, list every author and co-author with their login:
+     ```bash
+     gh pr view <pr> --json author,commits --jq '"PR author: \(.author.login)", (.commits[].authors[] | "\(.login) \(.name) <\(.email)>")' | sort -u
+     ```
+     Entries with the same login are one person. Entries without a login fall back to deduplicating by email (case-insensitive).
+   - The user is **Wes Vetter** (`@wesvetter`). `wes.vetter@gmail.com`, `wes.vetter@seenhealth.org`, and the `wes.vetter` name in Cursor cloud agent trailers are all him. When he is a co-author, write `Co-Authored-By: Wes Vetter <wes.vetter@gmail.com>` unless told otherwise.
+   - When creating a squashed commit for a PR, omit the PR author (every email under their login) as a co-author.
+   - For other co-authors, use the name and email they use in the repo's `git log`, even if the PR shows a different one.
    - Omit known bot signatures. The linter's list is the source of truth: Claude, Cursor, Codex, Copilot, Devin, Gemini, GPT, ChatGPT, Anthropic, and any `*[bot]*` name or email.
-   - Don't blindly re-use the PR title as the subject line, as the shape of the change may have changed during the course of review. Or there may simply be a better way of writing the subject line.
+   - Treat the PR title as a draft, often written by an agent. Don't inherit its prefix, scope, or wording: the shape of the change may have shifted during review, and step 3 decides the style.
 
-3. **Detect conventions** from `git log`:
+3. **Detect conventions**, weighting the committer's own history over the repo's:
+   - Read the committer's recent subjects first, matching by name because their work and personal emails often differ:
+     ```bash
+     git log origin/<base> -n 30 --author="$(git config user.name)" --pretty=format:'%s'
+     ```
+     Match their prefix, scope (or lack of one), length, and casing. Fall back to the repo-wide `git log` from step 2 only when they have fewer than ~5 commits.
+   - In the repo-wide log, count a run of subjects from one author or one stack (e.g. ten `refactor(core): ...` in a row) as a single data point.
+   - Look for the committer's earlier commits of the same kind (a backfill, migration, flag removal) and reuse their verb and prefix:
+     ```bash
+     git log origin/<base> --author="$(git config user.name)" -i --grep=backfill --pretty=format:'%s'
+     ```
    - **Conventional Commits** (`feat(scope): ...`, `fix(scope): ...`)? If recent commits match, follow that format.
        - Avoid misleading scopes (e.g. `feat(react)` for a UI change that doesn't specifically upgrade React capabilities or dependencies)
    - **Emoji prefixes**? If common, pick one from the **Emoji table** below that fits the change.
@@ -78,11 +93,12 @@ House style: subject ≤50 chars (hard cap 72), imperative mood, capitalized, no
    ```bash
    echo "<draft>" | ~/.dotfiles/bin/lint-commit-msg.mjs --fix --range origin/main..HEAD --pr-author <email>
    ```
-   - For a PR, `--pr-author` is the email the PR author commits under in that range (`gh pr view --json author` gives the login; match it to their commits). For a branch with no PR, pass your own `git config user.email`.
+   - For a PR, pass one of the PR author's emails from step 2 as `--pr-author`. For a branch with no PR, pass your own `git config user.email`.
+   - The linter matches by email, not login. Ignore a missing co-author warning for an email that step 2 tied to the PR author's login, or to a co-author who is already listed under their usual email.
    - The script wraps body paragraphs to ≤72 (preserving leading indent and bullet hanging-indent), passes through URLs, fully-quoted lines, and `[ref]:` link definitions, and prints lint output to stderr.
    - **`--fix` handles body wrapping for you.** Subject-line errors (length, capitalization, trailing period) and missing-blank-line errors are **not** auto-fixed — revise the draft and re-run.
    - With `--range`, the linter reads `git log` for that range and **warns** (still exit 0) if a human author or `Co-Authored-By` is missing from the draft. Known bots and the `--pr-author` email are ignored; without `--pr-author`, every human in the range is expected.
-   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it. **Missing `Co-Authored-By` warnings are not acceptable** — add the trailers and re-lint. Never accept fixable errors.
+   - Iterate until exit 0. The 50-char "recommended max" warning is acceptable but try to clear it. **Missing `Co-Authored-By` warnings are not acceptable** (except for the alternate emails described above) — add the trailers and re-lint. Never accept fixable errors.
    - The linter may complain about subject capitalization in repos that use Conventional Commits, this can be ignored if it doesn't apply to the repo's conventions.
 
 8. **Copy to clipboard.** Pipe through `~/.dotfiles/bin/clipcopy`, which picks the right backend for the current host (`pbcopy` on macOS, `wl-copy` on Wayland, `xclip` on X11, `tmux load-buffer -` inside tmux):
